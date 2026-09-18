@@ -281,6 +281,41 @@
   }
   .empty-note{font-size:.8rem;color:var(--text-soft);line-height:1.5;}
 
+  .w-main{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:2px 0 14px;}
+  .w-temp{
+    font-family:'Big Shoulders Display',sans-serif;font-size:3.1rem;font-weight:800;line-height:.9;
+    font-variant-numeric:tabular-nums;
+  }
+  .w-temp small{font-size:1.2rem;color:var(--text-soft);font-weight:700;margin-left:2px;}
+  .w-desc{text-align:right;font-size:.82rem;color:var(--text-soft);line-height:1.4;}
+  .w-desc strong{display:block;color:var(--text);font-size:.95rem;font-weight:800;}
+  .w-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+  .w-stat{
+    background:var(--surface-2);border:1px solid var(--border);border-radius:12px;
+    padding:10px 8px;text-align:center;
+  }
+  .w-stat .k{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);}
+  .w-stat .v{
+    font-family:'Big Shoulders Display',sans-serif;font-size:1.25rem;font-weight:800;margin-top:3px;
+    font-variant-numeric:tabular-nums;
+  }
+  .w-stat .v small{font-family:'Manrope',sans-serif;font-size:.68rem;font-weight:700;color:var(--text-soft);margin-left:2px;}
+  .w-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;}
+  .w-hour{
+    flex:0 0 auto;min-width:52px;text-align:center;padding:8px 6px;border-radius:11px;
+    background:var(--surface-2);border:1px solid var(--border);font-size:.72rem;
+  }
+  .w-hour.now{border-color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, var(--surface-2));}
+  .w-hour .h{color:var(--text-soft);font-weight:700;}
+  .w-hour .t{font-family:'Big Shoulders Display',sans-serif;font-size:1.05rem;font-weight:800;margin:2px 0;font-variant-numeric:tabular-nums;}
+  .w-hour .r{color:var(--text-soft);font-size:.66rem;font-weight:700;font-variant-numeric:tabular-nums;}
+  .w-hour .r.wet{color:var(--hot);}
+  .w-alert{
+    font-size:.78rem;font-weight:700;padding:9px 12px;border-radius:11px;margin-bottom:12px;line-height:1.4;
+    background:color-mix(in srgb, var(--hot) 12%, var(--surface));border:1px solid color-mix(in srgb, var(--hot) 45%, var(--border));
+    color:var(--text);
+  }
+
   .track-grid{display:grid;gap:8px;}
   .track-item{
     border:1px solid var(--border);border-radius:11px;padding:10px 12px;
@@ -394,6 +429,22 @@
   </div>
 </div>
 
+<div class="card">
+  <h2>Weather at track<span class="eyebrow-rule"></span></h2>
+  <div class="log-datetime">
+    <div class="field">
+      <label for="wDate">Date</label>
+      <input type="date" id="wDate">
+    </div>
+    <div class="field">
+      <label for="wTime">Time</label>
+      <input type="time" id="wTime" step="3600">
+    </div>
+  </div>
+  <p class="empty-note" id="wStatus" style="margin-bottom:12px;"></p>
+  <div id="wBody"></div>
+</div>
+
 <div class="card hero">
   <h2>Recommended pressures<span class="eyebrow-rule"></span></h2>
 
@@ -502,6 +553,7 @@
     <br>&middot; <a href="https://patrizicorse.com/2022-2026-karting-australia-competition-tyres-faqs/" target="_blank" rel="noopener">Patrizicorse &ndash; Karting Australia 2022&ndash;2026 LeCont competition tyre FAQ</a>
     <br>&middot; <a href="https://www.kartsportnews.com/2024/12/20/kas-2025-rule-book/" target="_blank" rel="noopener">KartSportNews &ndash; KA 2025 rule book (Maxxis Sport / 4SS, LeCont / Rotax)</a>
     <br>&middot; <a href="https://dwtracing.com/product/m-series-kart-karting-gokart-dwt-douglas-wheel-rim-cerchio-racing/" target="_blank" rel="noopener">DWT Racing &ndash; M-Series LV magnesium wheel</a>
+    <br>&middot; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo &ndash; free weather forecast &amp; historical weather data (the Weather card)</a>
     <br>&middot; <a href="https://www.kartingqld.com.au/clubs/" target="_blank" rel="noopener">Karting Queensland &ndash; affiliated clubs &amp; track specs</a>
     <br>&middot; <a href="https://www.kartsportnews.com/2025/01/28/cooloola-re-built/" target="_blank" rel="noopener">KartSportNews &ndash; Cooloola Coast rebuild report</a>
     <br>&middot; <a href="https://kartclass.com/blogs/news/best-outdoor-go-kart-tracks-in-queensland" target="_blank" rel="noopener">KartClass &ndash; QLD outdoor track lengths &amp; turn counts</a>
@@ -591,6 +643,23 @@
     {name:"Whitsunday Motorsport Club", venue:"Whitsunday Raceway, Proserpine", length:1080, direction:"Clockwise/anticlockwise", capacity:40, surface:"Bitumen"},
     {name:"Queensland Vintage & Historic Karting", venue:"Albion (event-based)", length:null, direction:null, capacity:null, surface:null, note:"Runs events at host venues rather than a home track."}
   ];
+
+  // Approximate town-level coordinates (weather is regional, so this is accurate enough for a forecast)
+  var COORDS = {
+    "Ipswich Kart Club":{lat:-27.62,lon:152.63,loc:"Willowbank"},
+    "Gold Coast Kart Club":{lat:-27.89,lon:153.31,loc:"Oxenford"},
+    "Toowoomba & Lockyer Valley Kart Club":{lat:-27.55,lon:152.13,loc:"Helidon Spa"},
+    "Warwick Kart Club":{lat:-28.15,lon:152.03,loc:"Allan / Warwick"},
+    "Cooloola Coast Kart Club":{lat:-26.19,lon:152.65,loc:"Gympie"},
+    "Bundaberg Kart Club":{lat:-24.87,lon:152.35,loc:"Bundaberg"},
+    "Gladstone Kart Club":{lat:-23.84,lon:151.26,loc:"Gladstone"},
+    "Cap Coast Kart Club":{lat:-23.13,lon:150.74,loc:"Yeppoon"},
+    "Emerald Kart Club":{lat:-23.53,lon:148.16,loc:"Emerald"},
+    "Cairns Kart Club":{lat:-16.92,lon:145.78,loc:"Cairns"},
+    "Townsville Kart Club":{lat:-19.26,lon:146.78,loc:"Garbutt, Townsville"},
+    "Whitsunday Motorsport Club":{lat:-20.40,lon:148.58,loc:"Proserpine"},
+    "Queensland Vintage & Historic Karting":{lat:-27.43,lon:153.04,loc:"Albion, Brisbane"}
+  };
 
   var LR_SPLIT = 0.15;
   var CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
@@ -726,6 +795,7 @@
         applyTrackProfile();
         calc();
         renderLog();
+        renderWeather();
         setSyncDot("ok");
         $("switchCard").hidden = true;
       }).catch(function(){ setSyncDot("offline"); });
@@ -975,6 +1045,7 @@
         '<div class="row2">'+entry.brand+' '+entry.compound+' &middot; '+entry.rim+' rim &middot; '+entry.grip+' grip &middot; '+entry.dir+' &middot; '+entry.temp+'&deg;C</div>' +
         '<div class="row2">Suggested cold FL '+entry.flCold+' / FR '+entry.frCold+' / RL '+entry.rlCold+' / RR '+entry.rrCold+' psi</div>' +
         (measuredText ? '<div class="row2">Measured (cold/hot psi): '+measuredText+'</div>' : '') +
+        (entry.weather ? '<div class="row2">Weather: '+entry.weather+'</div>' : '') +
         (entry.notes ? '<div class="row3">'+entry.notes.replace(/</g,"&lt;")+'</div>' : "") +
         '<button class="del" type="button" data-idx="'+idx+'">Remove</button>';
       list.appendChild(div);
@@ -1010,17 +1081,184 @@
       measured: readMeasured(),
       notes: $("notesField").value.trim()
     };
-    logEntries.push(entry);
-    saveLocal();
-    pushCloud();
-    $("notesField").value = "";
-    ["FL","FR","RL","RR"].forEach(function(pos){
-      $("m"+pos+"Cold").value = "";
-      $("m"+pos+"Hot").value = "";
+    var btn = $("saveLog");
+    btn.disabled = true;
+    var tm = $("logTime").value;
+
+    // Attach the weather for that track/date/hour, but never make the save wait more than ~2.5s (poor signal at the track)
+    var timeout = new Promise(function(resolve){ setTimeout(function(){ resolve(""); }, 2500); });
+    var lookup = fetchWeatherDay(state.track, dateVal)
+      .then(function(){ return weatherSummaryFor(state.track, dateVal, tm); })
+      .catch(function(){ return ""; });
+
+    Promise.race([lookup, timeout]).then(function(summary){
+      if(summary) entry.weather = summary;
+      logEntries.push(entry);
+      saveLocal();
+      pushCloud();
+      $("notesField").value = "";
+      ["FL","FR","RL","RR"].forEach(function(pos){
+        $("m"+pos+"Cold").value = "";
+        $("m"+pos+"Hot").value = "";
+      });
+      $("logDate").value = todayISO();
+      $("logTime").value = nowHM();
+      renderLog();
+      btn.disabled = false;
     });
-    $("logDate").value = todayISO();
-    $("logTime").value = nowHM();
-    renderLog();
+  }
+
+  // ---------- Weather ----------
+
+  var wCache = {};
+  var wReq = 0;
+  var COMPASS = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+
+  function compass(deg){ return COMPASS[Math.round(deg / 22.5) % 16]; }
+
+  function describeCode(c){
+    if(c === 0) return "Clear";
+    if(c === 1) return "Mostly clear";
+    if(c === 2) return "Partly cloudy";
+    if(c === 3) return "Overcast";
+    if(c === 45 || c === 48) return "Fog";
+    if(c >= 51 && c <= 57) return "Drizzle";
+    if(c >= 61 && c <= 67) return "Rain";
+    if(c >= 80 && c <= 82) return "Showers";
+    if(c >= 95) return "Thunderstorms";
+    return "Mixed conditions";
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+
+  function daysFromToday(iso){
+    var p = iso.split("-");
+    var d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+    var now = new Date();
+    var t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((d - t) / 86400000);
+  }
+
+  function hourIndex(timeStr){
+    var h = parseInt((timeStr || "12:00").split(":")[0], 10);
+    return isNaN(h) ? 12 : Math.max(0, Math.min(23, h));
+  }
+
+  function fetchWeatherDay(trackName, iso){
+    var c = COORDS[trackName];
+    if(!c) return Promise.reject(new Error("no-coords"));
+    var key = c.lat + "," + c.lon + "," + iso;
+    if(wCache[key]) return Promise.resolve(wCache[key]);
+    var diff = daysFromToday(iso);
+    if(diff > 14) return Promise.reject(new Error("future"));
+    var archive = diff < -90;
+    var vars = "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,cloud_cover,wind_speed_10m,wind_direction_10m,weather_code" + (archive ? "" : ",precipitation_probability");
+    var url = (archive ? "https://archive-api.open-meteo.com/v1/archive" : "https://api.open-meteo.com/v1/forecast")
+      + "?latitude=" + c.lat + "&longitude=" + c.lon + "&hourly=" + vars
+      + "&start_date=" + iso + "&end_date=" + iso
+      + "&timezone=Australia%2FBrisbane&wind_speed_unit=kmh";
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error("http");
+      return r.json();
+    }).then(function(j){
+      if(!j.hourly) throw new Error("nodata");
+      wCache[key] = j.hourly;
+      return j.hourly;
+    });
+  }
+
+  function weatherAt(h, i){
+    return {
+      temp: h.temperature_2m[i],
+      feels: h.apparent_temperature[i],
+      hum: h.relative_humidity_2m[i],
+      rain: h.precipitation[i],
+      prob: h.precipitation_probability ? h.precipitation_probability[i] : null,
+      cloud: h.cloud_cover[i],
+      wind: h.wind_speed_10m[i],
+      dir: h.wind_direction_10m[i],
+      code: h.weather_code[i]
+    };
+  }
+
+  function weatherSummaryFor(trackName, iso, timeStr){
+    var c = COORDS[trackName];
+    if(!c) return "";
+    var h = wCache[c.lat + "," + c.lon + "," + iso];
+    if(!h) return "";
+    var w = weatherAt(h, hourIndex(timeStr));
+    if(w.temp == null) return "";
+    return describeCode(w.code) + ", " + Math.round(w.temp) + "°C, " + Math.round(w.hum) + "% humidity, wind " + Math.round(w.wind) + " km/h " + compass(w.dir) + ", rain " + Number(w.rain).toFixed(1) + " mm";
+  }
+
+  function applyWeatherTemp(t){
+    t = Math.max(5, Math.min(42, Math.round(t)));
+    state.temp = t;
+    $("tempRange").value = t;
+    $("tempVal").textContent = t + "°C";
+    $("logTemp").value = t;
+    calc();
+  }
+
+  function renderWeather(){
+    var iso = $("wDate").value;
+    var tm = $("wTime").value;
+    var status = $("wStatus");
+    var body = $("wBody");
+    var c = COORDS[state.track];
+    if(!iso){ status.textContent = "Pick a date to see the weather."; body.innerHTML = ""; return; }
+    if(!c){ status.textContent = "No location for this track."; body.innerHTML = ""; return; }
+
+    var mine = ++wReq;
+    status.textContent = "Loading weather for " + c.loc + "…";
+
+    fetchWeatherDay(state.track, iso).then(function(h){
+      if(mine !== wReq) return;
+      var i = hourIndex(tm);
+      var w = weatherAt(h, i);
+      if(w.temp == null){
+        status.textContent = "No weather data for that hour yet.";
+        body.innerHTML = "";
+        return;
+      }
+      status.textContent = c.loc + " area · " + displayDate(iso) + " " + pad2(i) + ":00 · location is the nearest town, so treat it as regional weather.";
+
+      var wet = (w.rain != null && w.rain >= 0.1) || (w.prob != null && w.prob >= 50);
+      var html = "";
+      html += '<div class="w-main"><div class="w-temp">' + Math.round(w.temp) + '<small>°C</small></div>' +
+              '<div class="w-desc"><strong>' + describeCode(w.code) + '</strong>Feels like ' + Math.round(w.feels) + '°C</div></div>';
+      if(wet){
+        html += '<div class="w-alert">Rain is possible around this time. Check the track is dry and have a wet compound ready — wet tyres are in the tyre list.</div>';
+      }
+      html += '<div class="w-grid">' +
+        '<div class="w-stat"><div class="k">Humidity</div><div class="v">' + Math.round(w.hum) + '<small>%</small></div></div>' +
+        '<div class="w-stat"><div class="k">Wind</div><div class="v">' + Math.round(w.wind) + '<small>km/h ' + compass(w.dir) + '</small></div></div>' +
+        '<div class="w-stat"><div class="k">Cloud</div><div class="v">' + Math.round(w.cloud) + '<small>%</small></div></div>' +
+        '<div class="w-stat"><div class="k">Rain</div><div class="v">' + Number(w.rain).toFixed(1) + '<small>mm</small></div></div>' +
+        '<div class="w-stat"><div class="k">Rain chance</div><div class="v">' + (w.prob != null ? Math.round(w.prob) + '<small>%</small>' : '&ndash;') + '</div></div>' +
+        '<div class="w-stat"><div class="k">Feels like</div><div class="v">' + Math.round(w.feels) + '<small>°C</small></div></div>' +
+        '</div>';
+
+      html += '<div class="w-strip">';
+      for(var hr = 6; hr <= 18; hr++){
+        var x = weatherAt(h, hr);
+        if(x.temp == null) continue;
+        var xwet = (x.rain != null && x.rain >= 0.1) || (x.prob != null && x.prob >= 50);
+        var rtxt = x.prob != null ? Math.round(x.prob) + "%" : (x.rain >= 0.1 ? Number(x.rain).toFixed(1) + "mm" : "dry");
+        html += '<div class="w-hour' + (hr === i ? ' now' : '') + '"><div class="h">' + pad2(hr) + ':00</div><div class="t">' + Math.round(x.temp) + '&deg;</div><div class="r' + (xwet ? ' wet' : '') + '">' + rtxt + '</div></div>';
+      }
+      html += '</div>';
+
+      html += '<button class="btn" id="useWTemp" type="button">Use ' + Math.round(w.temp) + '°C in the calculator</button>';
+      body.innerHTML = html;
+      $("useWTemp").addEventListener("click", function(){ applyWeatherTemp(w.temp); });
+    }).catch(function(err){
+      if(mine !== wReq) return;
+      body.innerHTML = "";
+      status.textContent = err && err.message === "future"
+        ? "Forecasts only reach about 2 weeks ahead."
+        : "Weather unavailable right now — check your connection and try again.";
+    });
   }
 
   // ---------- Wiring ----------
@@ -1063,7 +1301,10 @@
       updateTrackNote();
       applyTrackProfile();
       calc();
+      renderWeather();
     });
+    $("wDate").addEventListener("change", renderWeather);
+    $("wTime").addEventListener("change", renderWeather);
     $("saveTrackProfile").addEventListener("click", function(){
       trackProfiles[state.track] = {
         grip: state.grip,
@@ -1098,10 +1339,13 @@
     $("logDate").value = todayISO();
     $("logTime").value = nowHM();
     $("logTemp").value = state.temp;
+    $("wDate").value = todayISO();
+    $("wTime").value = nowHM().split(":")[0] + ":00";
     wireUp();
     applyTrackProfile();
     calc();
     renderLog();
+    renderWeather();
 
     // Best-effort pull from cloud in case another device saved newer data
     pullCloud(myCode, false).then(function(j){
@@ -1123,6 +1367,7 @@
         applyTrackProfile();
         calc();
         renderLog();
+        renderWeather();
       }
       setSyncDot("ok");
     }).catch(function(){ setSyncDot("offline"); });
