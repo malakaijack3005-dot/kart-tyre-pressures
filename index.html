@@ -1,7 +1,7 @@
 <title>Apex PSI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#F5F3EE;
@@ -17,7 +17,10 @@
     --hot:#B3402C;
     --chip-bg:#EFECE3;
     --focus:#16151A;
-    --shadow: 0 1px 2px rgba(20,17,10,.04), 0 8px 24px -12px rgba(20,17,10,.16);
+    --hairline: linear-gradient(90deg, transparent, rgba(184,134,46,.55) 20%, rgba(184,134,46,.55) 80%, transparent);
+    --hero-wash: linear-gradient(165deg, rgba(184,134,46,.08), rgba(184,134,46,0) 60%);
+    --shadow: 0 1px 2px rgba(20,17,10,.04), 0 10px 28px -14px rgba(20,17,10,.18);
+    --inset-hi: inset 0 1px 0 rgba(255,255,255,.5);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -34,7 +37,10 @@
       --hot:#E2725A;
       --chip-bg:#23262B;
       --focus:#F5F3EE;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+      --hairline: linear-gradient(90deg, transparent, rgba(216,178,92,.55) 20%, rgba(216,178,92,.55) 80%, transparent);
+      --hero-wash: linear-gradient(165deg, rgba(216,178,92,.10), rgba(216,178,92,0) 60%);
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 32px -16px rgba(0,0,0,.7);
+      --inset-hi: inset 0 1px 0 rgba(255,255,255,.04);
     }
   }
   :root[data-theme="dark"]{
@@ -51,7 +57,10 @@
     --hot:#E2725A;
     --chip-bg:#23262B;
     --focus:#F5F3EE;
-    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -14px rgba(0,0,0,.6);
+    --hairline: linear-gradient(90deg, transparent, rgba(216,178,92,.55) 20%, rgba(216,178,92,.55) 80%, transparent);
+    --hero-wash: linear-gradient(165deg, rgba(216,178,92,.10), rgba(216,178,92,0) 60%);
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 14px 32px -16px rgba(0,0,0,.7);
+    --inset-hi: inset 0 1px 0 rgba(255,255,255,.04);
   }
   *{box-sizing:border-box;}
   body{
@@ -64,30 +73,38 @@
     margin-inline:auto;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{font-family:'Big Shoulders Display',system-ui,sans-serif; text-wrap:balance; margin:0;}
+  h2,h3{font-family:'Manrope',system-ui,sans-serif; text-wrap:balance; margin:0;}
   a{color:inherit;}
 
   .app-header{
     position:sticky;
     top:env(safe-area-inset-top,0px);
     background:var(--bg);
-    padding-block:8px 6px;
-    margin-bottom:6px;
+    padding-block:10px 8px;
+    margin-bottom:0;
     z-index:5;
     display:flex;
     align-items:center;
-    gap:11px;
+    gap:12px;
   }
   .app-header .mark{
-    width:36px;height:36px;border-radius:9px;
-    background:linear-gradient(155deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #1a1a1a));
+    width:40px;height:40px;border-radius:11px;
+    background:linear-gradient(155deg, color-mix(in srgb, var(--accent) 92%, white 25%), var(--accent) 45%, color-mix(in srgb, var(--accent) 55%, #1a1408));
     display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow), var(--inset-hi);
   }
-  .app-header .mark svg{width:20px;height:20px;}
-  .app-header h1{font-size:1.3rem;font-weight:800;letter-spacing:.01em;text-transform:uppercase;}
-  .app-header p{margin:0;font-size:.68rem;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;}
+  .app-header .mark svg{width:21px;height:21px;}
+  .app-header h1{
+    font-family:'Fraunces',Georgia,serif; font-optical-sizing:auto;
+    font-size:1.7rem;font-weight:600;letter-spacing:-.01em;line-height:1;
+    background:linear-gradient(100deg, var(--text) 30%, var(--accent) 95%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .app-header p{margin:2px 0 0;font-size:.66rem;color:var(--text-soft);letter-spacing:.09em;text-transform:uppercase;}
+  .header-rule{
+    height:1px;background:var(--hairline);margin:10px 0 16px;border:none;
+  }
 
   .account-bar{
     display:flex;align-items:center;gap:8px;
@@ -113,18 +130,23 @@
   .card{
     background:var(--surface);
     border:1px solid var(--border);
-    border-radius:16px;
-    padding:18px;
+    border-radius:18px;
+    padding:19px;
     margin-bottom:14px;
-    box-shadow:var(--shadow);
+    box-shadow:var(--shadow), var(--inset-hi);
+  }
+  .card.hero{
+    background-image: var(--hero-wash);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   }
   .card h2{
-    font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
-    color:var(--text-soft);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+    font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--text-soft);margin-bottom:15px;display:flex;align-items:center;gap:8px;
   }
   .card h2::before{
-    content:"";width:14px;height:2px;background:var(--accent);display:inline-block;border-radius:2px;
+    content:"";width:16px;height:2px;background:var(--accent);display:inline-block;border-radius:2px;flex-shrink:0;
   }
+  .card h2 .eyebrow-rule{flex:1;height:1px;background:var(--border);margin-left:2px;}
 
   .field{margin-bottom:14px;}
   .field:last-child{margin-bottom:0;}
@@ -136,15 +158,22 @@
     display:grid;
     grid-auto-flow:column;
     grid-auto-columns:1fr;
-    gap:6px;
+    gap:4px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:4px;
   }
   .seg button{
-    font-family:'Manrope',sans-serif;font-size:.82rem;font-weight:700;
-    padding:9px 4px;border-radius:10px;border:1px solid var(--border);
-    background:var(--surface-2);color:var(--text);cursor:pointer;
-    transition:background .1s ease, color .1s ease, border-color .1s ease;
+    font-family:'Manrope',sans-serif;font-size:.8rem;font-weight:700;
+    padding:8px 4px;border-radius:9px;border:1px solid transparent;
+    background:transparent;color:var(--text-soft);cursor:pointer;
+    transition:background .12s ease, color .12s ease, box-shadow .12s ease;
   }
-  .seg button.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+  .seg button.active{
+    background:var(--accent);color:var(--accent-ink);
+    box-shadow: 0 2px 6px -1px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
   .seg button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
 
   select, input[type="number"], input[type="date"], input[type="time"], input[type="text"]{
@@ -170,22 +199,28 @@
     margin-bottom:10px;
   }
   .tyre-tile{
-    background:var(--surface-2);border:1px solid var(--border);border-radius:13px;
-    padding:15px 12px;text-align:center;position:relative;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:16px 12px 14px;text-align:center;position:relative;
+    box-shadow: var(--inset-hi);
   }
   .tyre-tile .pos{
-    font-size:.66rem;font-weight:800;letter-spacing:.1em;color:var(--text-soft);
-    text-transform:uppercase;margin-bottom:9px;
+    font-size:.64rem;font-weight:800;letter-spacing:.12em;color:var(--text-soft);
+    text-transform:uppercase;margin-bottom:10px;
   }
-  .tyre-tile .cold-label{font-size:.66rem;color:var(--text-soft);margin-bottom:2px;letter-spacing:.02em;}
+  .tyre-tile .cold-label{font-size:.65rem;color:var(--text-soft);margin-bottom:1px;letter-spacing:.03em;}
   .tyre-tile .cold-val{
-    font-family:'Big Shoulders Display',sans-serif;font-size:2.15rem;font-weight:800;line-height:1;
-    font-variant-numeric:tabular-nums;color:var(--text);
+    font-family:'Big Shoulders Display',sans-serif;font-size:2.3rem;font-weight:800;line-height:1;
+    font-variant-numeric:tabular-nums;
+    background:linear-gradient(180deg, var(--text), color-mix(in srgb, var(--text) 75%, var(--accent)));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .tyre-tile .cold-unit{font-size:.68rem;color:var(--text-soft);margin-bottom:9px;}
+  .tyre-tile .cold-unit{
+    font-size:.66rem;color:var(--text-soft);margin-bottom:10px;
+    padding-bottom:9px;border-bottom:1px solid var(--border);
+  }
   .tyre-tile .hot-row{
-    border-top:1px dashed var(--border);padding-top:8px;margin-top:2px;
-    font-size:.76rem;color:var(--hot);font-weight:700;font-variant-numeric:tabular-nums;
+    padding-top:1px;margin-top:0;
+    font-size:.75rem;color:var(--hot);font-weight:700;font-variant-numeric:tabular-nums;
   }
   .rig-row-label{
     font-size:.66rem;font-weight:800;letter-spacing:.1em;color:var(--text-soft);
@@ -206,11 +241,14 @@
 
   .btn{
     font-family:'Manrope',sans-serif;font-weight:800;font-size:.84rem;letter-spacing:.01em;
-    background:var(--accent);color:var(--accent-ink);border:none;
-    border-radius:10px;padding:12px 14px;cursor:pointer;width:100%;
+    background:linear-gradient(155deg, color-mix(in srgb, var(--accent) 90%, white 20%), var(--accent));
+    color:var(--accent-ink);border:none;
+    border-radius:11px;padding:13px 14px;cursor:pointer;width:100%;
+    box-shadow: 0 3px 10px -3px color-mix(in srgb, var(--accent) 55%, transparent);
   }
   .btn.ghost{
-    background:transparent;color:var(--text-soft);border:1px solid var(--border);font-weight:700;
+    background:var(--surface-2);color:var(--text-soft);border:1px solid var(--border);font-weight:700;
+    box-shadow:none;
   }
   textarea{
     width:100%;font-family:inherit;font-size:.85rem;color:var(--text);
@@ -251,8 +289,8 @@
   .track-item .name{font-weight:700;}
   .track-item .venue{color:var(--text-soft);font-size:.76rem;margin-top:2px;}
 
-  details{border:1px solid var(--border);border-radius:16px;padding:16px 18px;background:var(--surface);margin-bottom:14px;box-shadow:var(--shadow);}
-  details summary{cursor:pointer;font-weight:700;font-size:.86rem;list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  details{border:1px solid var(--border);border-radius:18px;padding:17px 19px;background:var(--surface);margin-bottom:14px;box-shadow:var(--shadow), var(--inset-hi);}
+  details summary{cursor:pointer;font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);list-style:none;display:flex;align-items:center;justify-content:space-between;}
   details summary::-webkit-details-marker{display:none;}
   details summary .chev{transition:transform .15s ease;color:var(--text-soft);}
   details[open] summary .chev{transform:rotate(180deg);}
@@ -261,14 +299,16 @@
   .disclaimer{font-size:.78rem;color:var(--text-soft);line-height:1.55;margin-top:10px;}
   .disclaimer strong{color:var(--text);}
 
-  footer{text-align:center;font-size:.71rem;color:var(--text-soft);margin-top:20px;letter-spacing:.02em;}
+  footer{text-align:center;font-size:.7rem;color:var(--text-soft);margin-top:22px;letter-spacing:.03em;
+    padding-top:16px;border-top:1px solid var(--border);}
+  footer span{color:var(--accent);font-weight:700;}
 </style>
 
 <div class="app-header">
   <div class="mark">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 3L20 8V16L12 21L4 16V8L12 3Z" stroke="#17140B" stroke-width="1.5" stroke-linejoin="round"/>
-      <circle cx="12" cy="12" r="3" fill="#17140B"/>
+      <path d="M3 17L9.5 8L13 13L21 4" stroke="#17140B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="9.5" cy="8" r="1.6" fill="#17140B"/>
     </svg>
   </div>
   <div>
@@ -276,6 +316,7 @@
     <p>QLD sprint karting &middot; tyre pressure engine</p>
   </div>
 </div>
+<hr class="header-rule">
 
 <div class="account-bar">
   <span class="dot" id="syncDot"></span>
@@ -285,7 +326,7 @@
 </div>
 
 <div class="card" id="switchCard" hidden>
-  <h2>Switch device / sync code</h2>
+  <h2>Switch device / sync code<span class="eyebrow-rule"></span></h2>
   <p class="empty-note" style="margin-bottom:12px;">Enter the code shown on another device to pull its saved log and settings here, or leave it and press Generate for a brand new one.</p>
   <div class="field">
     <label for="codeInput">Sync code</label>
@@ -298,7 +339,7 @@
 </div>
 
 <div class="card">
-  <h2>Setup</h2>
+  <h2>Setup<span class="eyebrow-rule"></span></h2>
 
   <div class="field">
     <label for="brandSelect">Tyre brand</label>
@@ -353,8 +394,8 @@
   </div>
 </div>
 
-<div class="card">
-  <h2>Recommended pressures</h2>
+<div class="card hero">
+  <h2>Recommended pressures<span class="eyebrow-rule"></span></h2>
 
   <div class="rig-row-label">Front</div>
   <div class="rig">
@@ -400,7 +441,7 @@
 </div>
 
 <div class="card">
-  <h2>Session log</h2>
+  <h2>Session log<span class="eyebrow-rule"></span></h2>
 
   <div class="log-datetime">
     <div class="field">
@@ -471,7 +512,7 @@
   </div>
 </details>
 
-<footer>Apex PSI &middot; built for trackside use &middot; always finish with a hot-pressure check</footer>
+<footer><span>Apex PSI</span> &middot; built for trackside use &middot; always finish with a hot-pressure check</footer>
 
 <script>
 (function(){
