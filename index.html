@@ -1,0 +1,865 @@
+<title>Kart Tyre Pressures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F3EE;
+    --surface:#FFFFFF;
+    --surface-2:#EDE8DF;
+    --border:#DDD6C9;
+    --text:#201D19;
+    --text-soft:#6B655C;
+    --accent:#D9560B;
+    --accent-ink:#FFFFFF;
+    --good:#2F8F5B;
+    --warn:#B9860A;
+    --hot:#C7402B;
+    --chip-bg:#F1ECE3;
+    --focus:#1B1D21;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#131417;
+      --surface:#1C1E22;
+      --surface-2:#23262B;
+      --border:#34373D;
+      --text:#EDEAE4;
+      --text-soft:#A7A29A;
+      --accent:#F07A3D;
+      --accent-ink:#1A1006;
+      --good:#4CAF77;
+      --warn:#E0B23C;
+      --hot:#E5695A;
+      --chip-bg:#26292E;
+      --focus:#F6F3EE;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#131417;
+    --surface:#1C1E22;
+    --surface-2:#23262B;
+    --border:#34373D;
+    --text:#EDEAE4;
+    --text-soft:#A7A29A;
+    --accent:#F07A3D;
+    --accent-ink:#1A1006;
+    --good:#4CAF77;
+    --warn:#E0B23C;
+    --hot:#E5695A;
+    --chip-bg:#26292E;
+    --focus:#F6F3EE;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    padding-inline:16px;
+    padding-block:20px 48px;
+    max-width:560px;
+    margin-inline:auto;
+  }
+  h1,h2,h3{font-family:'Oswald',system-ui,sans-serif; text-wrap:balance; margin:0;}
+  .app-header{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    background:var(--bg);
+    padding-block:8px 4px;
+    margin-bottom:14px;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .app-header .mark{
+    width:34px;height:34px;border-radius:8px;
+    background:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .app-header .mark svg{width:20px;height:20px;}
+  .app-header h1{font-size:1.15rem;font-weight:600;letter-spacing:.01em;}
+  .app-header p{margin:0;font-size:.72rem;color:var(--text-soft);letter-spacing:.03em;text-transform:uppercase;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .card h2{font-size:.95rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-soft);margin-bottom:12px;}
+
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{
+    display:block;font-size:.78rem;font-weight:600;color:var(--text-soft);
+    margin-bottom:6px;letter-spacing:.02em;
+  }
+  .seg{
+    display:grid;
+    grid-auto-flow:column;
+    grid-auto-columns:1fr;
+    gap:6px;
+  }
+  .seg button{
+    font-family:inherit;font-size:.85rem;font-weight:600;
+    padding:9px 4px;border-radius:9px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--text);cursor:pointer;
+  }
+  .seg button.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+  .seg button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  select, input[type="number"], input[type="date"], input[type="time"]{
+    width:100%;font-family:inherit;font-size:.92rem;color:var(--text);
+    background:var(--surface-2);border:1px solid var(--border);border-radius:9px;
+    padding:10px 12px;
+    color-scheme: light dark;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--focus);outline-offset:1px;
+  }
+  .temp-row{display:flex;gap:10px;align-items:center;}
+  .temp-row input[type="range"]{flex:1;accent-color:var(--accent);}
+  .temp-row .temp-val{
+    font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:600;
+    min-width:58px;text-align:right;font-variant-numeric:tabular-nums;
+  }
+
+  .rig{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .tyre-tile{
+    background:var(--surface-2);border:1px solid var(--border);border-radius:12px;
+    padding:14px 12px;text-align:center;
+  }
+  .tyre-tile .pos{
+    font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--text-soft);
+    text-transform:uppercase;margin-bottom:8px;
+  }
+  .tyre-tile .cold-label{font-size:.68rem;color:var(--text-soft);margin-bottom:2px;}
+  .tyre-tile .cold-val{
+    font-family:'Oswald',sans-serif;font-size:2rem;font-weight:600;line-height:1;
+    font-variant-numeric:tabular-nums;color:var(--text);
+  }
+  .tyre-tile .cold-unit{font-size:.7rem;color:var(--text-soft);margin-bottom:8px;}
+  .tyre-tile .hot-row{
+    border-top:1px dashed var(--border);padding-top:8px;margin-top:2px;
+    font-size:.78rem;color:var(--hot);font-weight:600;font-variant-numeric:tabular-nums;
+  }
+  .rig-row-label{
+    font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--text-soft);
+    text-transform:uppercase;margin:10px 0 4px;
+  }
+  .rise-note{
+    font-size:.8rem;color:var(--text-soft);text-align:center;margin-top:4px;
+  }
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .chip{
+    font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:100px;
+    background:var(--chip-bg);border:1px solid var(--border);color:var(--text-soft);
+    font-variant-numeric:tabular-nums;
+  }
+  .chip.pos{color:var(--good);}
+  .chip.neg{color:var(--hot);}
+
+  .btn{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;
+    background:var(--accent);color:var(--accent-ink);border:none;
+    border-radius:9px;padding:11px 14px;cursor:pointer;width:100%;
+  }
+  .btn.ghost{
+    background:transparent;color:var(--text-soft);border:1px solid var(--border);
+  }
+  textarea{
+    width:100%;font-family:inherit;font-size:.85rem;color:var(--text);
+    background:var(--surface-2);border:1px solid var(--border);border-radius:9px;
+    padding:10px 12px;resize:vertical;min-height:44px;
+  }
+
+  .log-entry{
+    border:1px solid var(--border);border-radius:10px;padding:10px 12px;
+    margin-bottom:8px;font-size:.8rem;background:var(--surface-2);
+  }
+  .log-entry .row1{display:flex;justify-content:space-between;gap:8px;font-weight:600;}
+  .log-entry .row2{color:var(--text-soft);margin-top:3px;}
+  .log-entry .row3{margin-top:6px;color:var(--text);}
+  .log-entry .del{
+    background:none;border:none;color:var(--text-soft);font-size:.72rem;
+    text-decoration:underline;cursor:pointer;padding:0;margin-top:6px;
+  }
+  .empty-note{font-size:.82rem;color:var(--text-soft);}
+
+  .log-datetime{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .log-datetime .field{flex:1;min-width:104px;margin-bottom:0;}
+
+  .measure-grid{
+    display:grid;grid-template-columns:30px 1fr 1fr;gap:6px 8px;align-items:center;
+  }
+  .measure-head, .measure-row{display:contents;}
+  .measure-head span{
+    font-size:.66rem;font-weight:700;color:var(--text-soft);text-transform:uppercase;
+    letter-spacing:.05em;text-align:center;
+  }
+  .measure-row span{font-size:.8rem;font-weight:700;color:var(--text-soft);}
+  .measure-row input{width:100%;padding:8px 6px;font-size:.85rem;text-align:center;}
+
+  .track-grid{display:grid;gap:8px;}
+  .track-item{
+    border:1px solid var(--border);border-radius:10px;padding:10px 12px;
+    background:var(--surface-2);font-size:.82rem;
+  }
+  .track-item .name{font-weight:600;}
+  .track-item .venue{color:var(--text-soft);font-size:.76rem;margin-top:2px;}
+
+  details{border:1px solid var(--border);border-radius:14px;padding:14px 16px;background:var(--surface);margin-bottom:14px;}
+  details summary{cursor:pointer;font-weight:600;font-size:.9rem;list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary .chev{transition:transform .15s ease;color:var(--text-soft);}
+  details[open] summary .chev{transform:rotate(180deg);}
+  .src-list{margin-top:12px;font-size:.8rem;color:var(--text-soft);line-height:1.6;}
+  .src-list a{color:var(--text-soft);}
+  .disclaimer{font-size:.78rem;color:var(--text-soft);line-height:1.55;margin-top:10px;}
+  .disclaimer strong{color:var(--text);}
+
+  footer{text-align:center;font-size:.72rem;color:var(--text-soft);margin-top:18px;}
+</style>
+
+<div class="app-header">
+  <div class="mark">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="8" stroke="white" stroke-width="1.6"/>
+      <circle cx="12" cy="12" r="2.6" fill="white"/>
+      <path d="M12 4V2M12 22v-2M20 12h2M2 12h2" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div>
+    <h1>Kart Tyre Pressures</h1>
+    <p>QLD sprint karting &middot; cold &amp; hot psi</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Setup</h2>
+
+  <div class="field">
+    <label for="brandSeg">Tyre brand</label>
+    <div class="seg" id="brandSeg">
+      <button type="button" data-brand="dunlop" class="active">Dunlop</button>
+      <button type="button" data-brand="mg">MG</button>
+      <button type="button" data-brand="vega">Vega</button>
+      <button type="button" data-brand="lecont">LeCont</button>
+      <button type="button" data-brand="bridgestone">Bridgestone</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="compoundSelect">Compound</label>
+    <select id="compoundSelect"></select>
+  </div>
+
+  <div class="field">
+    <label for="rimSelect">Wheel</label>
+    <select id="rimSelect"></select>
+  </div>
+
+  <div class="field">
+    <label for="gripSeg">Track grip today</label>
+    <div class="seg" id="gripSeg">
+      <button type="button" data-grip="low">Low / green</button>
+      <button type="button" data-grip="med" class="active">Normal</button>
+      <button type="button" data-grip="high">High / rubbered</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="dirSeg">Which way does the track turn more today?</label>
+    <div class="seg" id="dirSeg">
+      <button type="button" data-dir="right">More right-handers</button>
+      <button type="button" data-dir="balanced" class="active">Balanced</button>
+      <button type="button" data-dir="left">More left-handers</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="tempRange">Air temperature</label>
+    <div class="temp-row">
+      <input type="range" id="tempRange" min="5" max="42" step="1" value="24">
+      <span class="temp-val" id="tempVal">24&deg;C</span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="trackSelect">Track</label>
+    <select id="trackSelect"></select>
+    <p class="empty-note" id="trackNote" style="margin-top:8px;"></p>
+    <p class="empty-note" id="trackProfileNote" style="margin-top:4px;"></p>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn ghost" id="saveTrackProfile" type="button" style="width:auto;flex:1;font-size:.78rem;padding:8px 10px;">Remember grip &amp; direction for this track</button>
+      <button class="btn ghost" id="clearTrackProfile" type="button" style="width:auto;font-size:.78rem;padding:8px 10px;">Clear</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Recommended pressures</h2>
+
+  <div class="rig-row-label">Front</div>
+  <div class="rig">
+    <div class="tyre-tile">
+      <div class="pos">Front left</div>
+      <div class="cold-label">Cold fill</div>
+      <div class="cold-val" id="fCold">--</div>
+      <div class="cold-unit">psi</div>
+      <div class="hot-row" id="fHot">Hot target --</div>
+    </div>
+    <div class="tyre-tile">
+      <div class="pos">Front right</div>
+      <div class="cold-label">Cold fill</div>
+      <div class="cold-val" id="fCold2">--</div>
+      <div class="cold-unit">psi</div>
+      <div class="hot-row" id="fHot2">Hot target --</div>
+    </div>
+  </div>
+  <p class="rise-note" id="frontSplitNote"></p>
+
+  <div class="rig-row-label">Rear</div>
+  <div class="rig">
+    <div class="tyre-tile">
+      <div class="pos">Rear left</div>
+      <div class="cold-label">Cold fill</div>
+      <div class="cold-val" id="rCold">--</div>
+      <div class="cold-unit">psi</div>
+      <div class="hot-row" id="rHot">Hot target --</div>
+    </div>
+    <div class="tyre-tile">
+      <div class="pos">Rear right</div>
+      <div class="cold-label">Cold fill</div>
+      <div class="cold-val" id="rCold2">--</div>
+      <div class="cold-unit">psi</div>
+      <div class="hot-row" id="rHot2">Hot target --</div>
+    </div>
+  </div>
+  <p class="rise-note" id="rearSplitNote"></p>
+
+  <div class="rise-note" id="riseNote"></div>
+
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="card">
+  <h2>Session log</h2>
+
+  <div class="log-datetime">
+    <div class="field">
+      <label for="logDate">Date</label>
+      <input type="date" id="logDate">
+    </div>
+    <div class="field">
+      <label for="logTime">Time</label>
+      <input type="time" id="logTime">
+    </div>
+    <div class="field">
+      <label for="logTemp">Air temp (&deg;C)</label>
+      <input type="number" id="logTemp" step="1" inputmode="numeric">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Measured pressures (psi) &mdash; fill in whatever you actually checked</label>
+    <div class="measure-grid">
+      <div class="measure-head"><span></span><span>Cold</span><span>Hot</span></div>
+      <div class="measure-row"><span>FL</span><input type="number" step="0.1" inputmode="decimal" id="mFLCold" placeholder="&ndash;"><input type="number" step="0.1" inputmode="decimal" id="mFLHot" placeholder="&ndash;"></div>
+      <div class="measure-row"><span>FR</span><input type="number" step="0.1" inputmode="decimal" id="mFRCold" placeholder="&ndash;"><input type="number" step="0.1" inputmode="decimal" id="mFRHot" placeholder="&ndash;"></div>
+      <div class="measure-row"><span>RL</span><input type="number" step="0.1" inputmode="decimal" id="mRLCold" placeholder="&ndash;"><input type="number" step="0.1" inputmode="decimal" id="mRLHot" placeholder="&ndash;"></div>
+      <div class="measure-row"><span>RR</span><input type="number" step="0.1" inputmode="decimal" id="mRRCold" placeholder="&ndash;"><input type="number" step="0.1" inputmode="decimal" id="mRRHot" placeholder="&ndash;"></div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="notesField">Notes</label>
+    <textarea id="notesField" placeholder="e.g. good balance mid-corner, a bit loose on exit"></textarea>
+  </div>
+
+  <button class="btn" id="saveLog" type="button">Save this session to log</button>
+  <p class="empty-note" style="margin-top:10px;">Saved only on this device/browser. Your own measured pressures are the best guide for next time at the same track.</p>
+  <div id="logList" style="margin-top:12px;"></div>
+</div>
+
+<details>
+  <summary>Queensland tracks <span class="chev">&#9662;</span></summary>
+  <div class="track-grid" id="trackGrid" style="margin-top:12px;"></div>
+</details>
+
+<details>
+  <summary>Sources &amp; how this is calculated <span class="chev">&#9662;</span></summary>
+  <div class="disclaimer">
+    <strong>This is a starting point, not a guarantee.</strong> Kart tyre pressure has no universal formula &mdash; it depends on track grip, surface temperature, kart setup and driver style, and every tyre maker says to confirm hot pressures with a gauge straight off the track. Use these numbers to set your cold fill, then measure hot and log the result so the app (and you) get more accurate for that track over time.
+  </div>
+  <div class="src-list">
+    Baseline compound ranges and the temperature/rim/grip adjustments were built from:
+    <br>&middot; <a href="https://mgtires.com/en/dicas" target="_blank" rel="noopener">MG Tires &ndash; Tips</a>
+    <br>&middot; <a href="https://www.nashvillekartinggroup.com/tires" target="_blank" rel="noopener">Nashville Karting Group &ndash; MG tyre pressure guide</a>
+    <br>&middot; <a href="https://tkart.it/en/magazine/how-to/how-to-manage-kart-tyre-pressure-like-a-true-professional-the-vega-karting-method-pressure-gauge-engine-chassis-set-up-circuit-layout-driving" target="_blank" rel="noopener">TKART &ndash; the Vega method for kart tyre pressure</a>
+    <br>&middot; <a href="https://tkart.it/en/magazine/how-to/everything-about-kart-tyre-pressure" target="_blank" rel="noopener">TKART &ndash; everything about kart tyre pressure</a>
+    <br>&middot; <a href="https://flowracers.com/blog/go-kart-tire-pressure/" target="_blank" rel="noopener">Flow Racers &ndash; go-kart tyre pressure reference</a>
+    <br>&middot; <a href="https://kartletix.com/2024/06/21/setting-tyre-pressures-the-complete-guide/" target="_blank" rel="noopener">KartletiX &ndash; setting tyre pressures</a>
+    <br>&middot; <a href="https://dk17.com.au/" target="_blank" rel="noopener">Dunlop Kartsport Australia</a>
+    <br>&middot; <a href="https://kartingaustralia.mymedia.delivery/wp-content/uploads/2021/12/LeCont-LH03-AUS-Dry-Tyre-Specification-2022-2026-.pdf" target="_blank" rel="noopener">Karting Australia &ndash; LeCont LH03 AUS dry tyre spec (2022&ndash;2026)</a>
+    <br>&middot; <a href="https://www.kartingqld.com.au/clubs/" target="_blank" rel="noopener">Karting Queensland &ndash; affiliated clubs &amp; track specs</a>
+    <br>&middot; <a href="https://www.kartsportnews.com/2025/01/28/cooloola-re-built/" target="_blank" rel="noopener">KartSportNews &ndash; Cooloola Coast rebuild report</a>
+    <br>&middot; <a href="https://kartclass.com/blogs/news/best-outdoor-go-kart-tracks-in-queensland" target="_blank" rel="noopener">KartClass &ndash; QLD outdoor track lengths &amp; turn counts</a>
+    <br><br>Bridgestone YDS has very little published pressure data, so its baseline is conservative &mdash; treat it as a rougher starting point than the others.
+    <br><br><strong>On turn counts:</strong> Ipswich (14 turns), Sandy Creek/Warwick (13) and Gympie Gold/Cooloola (11) are the only QLD club tracks with a published turn count I could find. None of the public sources break that down into which turns are left- vs right-handers &mdash; the one guide detailed enough to do that (a third-party Ipswich track guide) is a paid product, so I left it out rather than guess at its contents.
+    <br><br><strong>Your own track knowledge beats any of this:</strong> tap "Remember grip &amp; direction for this track" after you've dialled in the grip and turn-bias selectors for a track you actually race at, and the app will auto-apply that next time you pick the same track (saved on this device, overriding the generic defaults above). That's the most precise per-track data this app can have &mdash; it comes from you, not a search result.
+    <br><br><strong>On left/right split:</strong> cornering weight transfers onto the outside tyres, so a track with more right-hand corners loads and heats the left-side tyres harder (and vice versa) &mdash; that side is set 0.15 psi lower cold, in line with the 0.1&ndash;0.2 psi split described by <a href="https://flowracers.com/blog/go-kart-tire-pressure/" target="_blank" rel="noopener">Flow Racers' go-kart tyre pressure guide</a>. I couldn't find published corner-direction breakdowns for individual QLD tracks, so you tell it which way your track leans on the day rather than it guessing.
+    <br><br><strong>On track selection:</strong> the length/direction/capacity shown for each QLD track come from Karting Queensland's own club database. Actual day-to-day grip level (how rubbered-in a track is) isn't published anywhere searchable for most of these clubs &mdash; it lives in local knowledge and closed club Facebook groups. Cooloola Coast is the one track with a citable public signal (a full pavement rebuild, reopened Jan 2025) so it defaults the grip selector to Low; every other track is left on your manual grip choice rather than guessed at. Log your own hot readings per track and this becomes more accurate than any generic source.
+  </div>
+</details>
+
+<footer>Built for trackside use &middot; always finish with a hot-pressure check</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var COMPOUNDS = {
+    dunlop: [
+      {id:"sl1", label:"SL1 (slick)", cold:12, rise:2},
+      {id:"d5", label:"D5 (slick)", cold:12, rise:2},
+      {id:"kt-wet", label:"KT (wet)", cold:10, rise:1}
+    ],
+    mg: [
+      {id:"red-sh", label:"Red SH (low/med HP)", cold:12.5, rise:1},
+      {id:"yellow-sm", label:"Yellow SM (TaG/Shifter)", cold:12, rise:2.5},
+      {id:"white-sw", label:"White SW (wet)", cold:9, rise:1}
+    ],
+    vega: [
+      {id:"white-xm4", label:"White XM4 (soft)", cold:8, rise:1.5},
+      {id:"green-xh4", label:"Green XH4 (hard)", cold:10, rise:2},
+      {id:"red-vah", label:"Red VAH (endurance)", cold:11, rise:2},
+      {id:"rain-w6", label:"Rain W6 (wet)", cold:8, rise:1}
+    ],
+    lecont: [
+      {id:"lh03", label:"LH03 (TaG medium, AUS dry)", cold:10.25, rise:2}
+    ],
+    bridgestone: [
+      {id:"yds", label:"YDS (club, low data)", cold:11, rise:2}
+    ]
+  };
+
+  var RIMS = [
+    {id:"alloy", label:"Aluminium (generic)", adj:0},
+    {id:"dwt-alloy", label:"DWT (aluminium)", adj:-0.25},
+    {id:"dwt-mag", label:"DWT M-Series LV (magnesium)", adj:-0.75},
+    {id:"mag", label:"Magnesium (generic)", adj:-0.5}
+  ];
+
+  var TRACKS = [
+    {name:"Ipswich Kart Club", venue:"Willowbank, near Champions Way", length:1080, direction:"Clockwise only", capacity:40, surface:"Bitumen", turns:14},
+    {name:"Gold Coast Kart Club", venue:"Formula K Raceway, Oxenford", length:null, direction:null, capacity:null, surface:"Bitumen", note:"No published track specs found for this venue."},
+    {name:"Toowoomba & Lockyer Valley Kart Club", venue:"Greer Park Raceway, Helidon Spa", length:null, direction:null, capacity:null, surface:"Bitumen", note:"Undulating layout: descending main straight, climb to the pits, a hairpin and a semi-chicane (club site)."},
+    {name:"Warwick Kart Club", venue:"Sandy Creek Raceway", length:993, direction:"Clockwise/anticlockwise", capacity:36, surface:"Bitumen", turns:13},
+    {name:"Cooloola Coast Kart Club", venue:"Gympie Gold Raceway, Golden Beach", length:890, direction:"Clockwise/anticlockwise", capacity:36, surface:"Bitumen", turns:11, note:"Full pavement & subgrade rebuild after 2022 flood damage, reopened Australia Day 2025 — surface likely still green.", defaultGrip:"low", source:"KartSportNews, Jan 2025"},
+    {name:"Bundaberg Kart Club", venue:"Dromeside Raceway", length:760, direction:"Clockwise/anticlockwise", capacity:32, surface:"Bitumen since 1989"},
+    {name:"Gladstone Kart Club", venue:"Formula K Raceway, Gladstone", length:710, direction:"Clockwise/anticlockwise", capacity:28, surface:"Bitumen"},
+    {name:"Cap Coast Kart Club", venue:"Yeppoon area", length:null, direction:null, capacity:null, surface:null, note:"No published track specs found for this venue."},
+    {name:"Emerald Kart Club", venue:"Emerald", length:1006, direction:"Clockwise/anticlockwise", capacity:40, surface:"Bitumen"},
+    {name:"Cairns Kart Club", venue:"Cairns Race Track", length:408, direction:"Clockwise/anticlockwise", capacity:20, surface:"Bitumen", note:"Shortest club circuit in QLD — short lap means more repeated braking/traction zones per minute."},
+    {name:"Townsville Kart Club", venue:"Sun City Raceway, Garbutt East", length:1031, direction:"Clockwise/anticlockwise", capacity:40, surface:"Bitumen"},
+    {name:"Whitsunday Motorsport Club", venue:"Whitsunday Raceway, Proserpine", length:1080, direction:"Clockwise/anticlockwise", capacity:40, surface:"Bitumen"},
+    {name:"Queensland Vintage & Historic Karting", venue:"Albion (event-based)", length:null, direction:null, capacity:null, surface:null, note:"Runs events at host venues rather than a home track."}
+  ];
+
+  var LR_SPLIT = 0.15;
+
+  var state = {brand:"dunlop", compound:"sl1", rim:"alloy", grip:"med", dir:"balanced", temp:24, track:TRACKS[0].name};
+
+  function $(id){return document.getElementById(id);}
+
+  function loadState(){
+    try{
+      var saved = JSON.parse(localStorage.getItem("ktp_state") || "null");
+      if(saved) Object.assign(state, saved);
+    }catch(e){}
+  }
+  function saveState(){
+    try{ localStorage.setItem("ktp_state", JSON.stringify(state)); }catch(e){}
+  }
+
+  function loadTrackProfiles(){
+    try{ return JSON.parse(localStorage.getItem("ktp_trackProfiles") || "{}"); }catch(e){ return {}; }
+  }
+  function saveTrackProfiles(profiles){
+    try{ localStorage.setItem("ktp_trackProfiles", JSON.stringify(profiles)); }catch(e){}
+  }
+  function getTrackProfile(name){
+    return loadTrackProfiles()[name] || null;
+  }
+  function applyTrackProfile(){
+    var profile = getTrackProfile(state.track);
+    var t = getTrack();
+    if(profile){
+      state.grip = profile.grip;
+      state.dir = profile.dir;
+      setSeg("gripSeg","data-grip",state.grip);
+      setSeg("dirSeg","data-dir",state.dir);
+      $("trackProfileNote").textContent = "Using your saved grip & direction for this track (saved " + profile.date + ").";
+    }else if(t.defaultGrip){
+      state.grip = t.defaultGrip;
+      setSeg("gripSeg","data-grip",state.grip);
+      $("trackProfileNote").textContent = "";
+    }else{
+      $("trackProfileNote").textContent = "";
+    }
+  }
+
+  function populateCompounds(){
+    var sel = $("compoundSelect");
+    sel.innerHTML = "";
+    COMPOUNDS[state.brand].forEach(function(c){
+      var opt = document.createElement("option");
+      opt.value = c.id; opt.textContent = c.label;
+      sel.appendChild(opt);
+    });
+    var has = COMPOUNDS[state.brand].some(function(c){return c.id === state.compound;});
+    if(!has) state.compound = COMPOUNDS[state.brand][0].id;
+    sel.value = state.compound;
+  }
+
+  function trackFacts(t){
+    var bits = [];
+    if(t.length) bits.push(t.length + " m");
+    if(t.turns) bits.push(t.turns + " turns");
+    if(t.direction) bits.push(t.direction);
+    if(t.capacity) bits.push("cap. " + t.capacity);
+    if(t.surface) bits.push(t.surface);
+    return bits.join(" · ");
+  }
+
+  function populateRims(){
+    var sel = $("rimSelect");
+    sel.innerHTML = "";
+    RIMS.forEach(function(r){
+      var opt = document.createElement("option");
+      opt.value = r.id; opt.textContent = r.label;
+      sel.appendChild(opt);
+    });
+    sel.value = state.rim;
+  }
+
+  function getTrack(){
+    return TRACKS.find(function(t){return t.name === state.track;}) || TRACKS[0];
+  }
+
+  function updateTrackNote(){
+    var t = getTrack();
+    var facts = trackFacts(t);
+    var parts = [];
+    if(facts) parts.push(facts);
+    if(t.note) parts.push(t.note);
+    if(t.source) parts.push("Source: " + t.source);
+    $("trackNote").textContent = parts.length ? parts.join(" — ") : "No published track specs found for this venue.";
+  }
+
+  function populateTracks(){
+    var sel = $("trackSelect");
+    sel.innerHTML = "";
+    TRACKS.forEach(function(t){
+      var opt = document.createElement("option");
+      opt.value = t.name; opt.textContent = t.name;
+      sel.appendChild(opt);
+    });
+    sel.value = state.track;
+    updateTrackNote();
+
+    var grid = $("trackGrid");
+    grid.innerHTML = "";
+    TRACKS.forEach(function(t){
+      var d = document.createElement("div");
+      d.className = "track-item";
+      var facts = trackFacts(t);
+      d.innerHTML = '<div class="name">'+t.name+'</div><div class="venue">'+t.venue+'</div>'
+        + (facts ? '<div class="venue">'+facts+'</div>' : '')
+        + (t.note ? '<div class="venue">'+t.note+(t.source ? ' (Source: '+t.source+')' : '')+'</div>' : '');
+      grid.appendChild(d);
+    });
+  }
+
+  function setSeg(containerId, dataAttr, value){
+    var container = $(containerId);
+    Array.prototype.forEach.call(container.children, function(btn){
+      btn.classList.toggle("active", btn.getAttribute(dataAttr) === value);
+    });
+  }
+
+  function round25(n){ return Math.round(n * 4) / 4; }
+
+  function getCompound(){
+    return COMPOUNDS[state.brand].find(function(c){return c.id === state.compound;}) || COMPOUNDS[state.brand][0];
+  }
+
+  function getRim(){
+    return RIMS.find(function(r){return r.id === state.rim;}) || RIMS[0];
+  }
+
+  function fmt(n){ return n.toFixed(2).replace(/\.?0+$/,""); }
+
+  function calc(){
+    var c = getCompound();
+
+    var tempAdj = Math.max(-2, Math.min(2.5, (20 - state.temp) * 0.15));
+    var rimAdj = getRim().adj;
+    var gripAdj = state.grip === "low" ? 1 : (state.grip === "high" ? -1 : 0);
+
+    // More right-handers load the LEFT (outside) tyres harder through the corner,
+    // so the left side runs the lower cold pressure, and vice versa for left-handers.
+    var leftAdj = state.dir === "right" ? -LR_SPLIT : 0;
+    var rightAdj = state.dir === "left" ? -LR_SPLIT : 0;
+
+    var base = c.cold + tempAdj + rimAdj + gripAdj;
+
+    var flCold = round25(base + leftAdj);
+    var frCold = round25(base + rightAdj);
+    var rlCold = round25(base - 0.5 + leftAdj);
+    var rrCold = round25(base - 0.5 + rightAdj);
+
+    var flHot = round25(flCold + c.rise);
+    var frHot = round25(frCold + c.rise);
+    var rlHot = round25(rlCold + c.rise);
+    var rrHot = round25(rrCold + c.rise);
+
+    $("fCold").textContent = fmt(flCold);
+    $("fCold2").textContent = fmt(frCold);
+    $("rCold").textContent = fmt(rlCold);
+    $("rCold2").textContent = fmt(rrCold);
+
+    $("fHot").textContent = "Hot target ~" + fmt(flHot) + " psi";
+    $("fHot2").textContent = "Hot target ~" + fmt(frHot) + " psi";
+    $("rHot").textContent = "Hot target ~" + fmt(rlHot) + " psi";
+    $("rHot2").textContent = "Hot target ~" + fmt(rrHot) + " psi";
+
+    var splitText = state.dir === "balanced"
+      ? "No left/right split — track marked balanced."
+      : "Left/right split: " + (state.dir === "right" ? "left" : "right") + " side is −" + LR_SPLIT + " psi (works harder through the dominant " + (state.dir === "right" ? "right-handers" : "left-handers") + ").";
+    $("frontSplitNote").textContent = splitText;
+    $("rearSplitNote").textContent = splitText;
+
+    $("riseNote").textContent = "Expect roughly +" + c.rise + " psi cold→hot on a good session. If it rises a lot more, your cold fill is too high.";
+
+    var chips = [];
+    chips.push({label:"Compound base "+c.cold+" psi", cls:""});
+    chips.push({label:(tempAdj>=0?"+":"")+fmt(tempAdj)+" psi air temp", cls: tempAdj>0?"pos":(tempAdj<0?"neg":"")});
+    if(rimAdj !== 0) chips.push({label:rimAdj+" psi "+getRim().label, cls:"neg"});
+    if(gripAdj !== 0) chips.push({label:(gripAdj>0?"+":"")+gripAdj+" psi "+(state.grip==="low"?"low grip":"high grip"), cls: gripAdj>0?"pos":"neg"});
+    chips.push({label:"-0.5 psi rear (runs hotter)", cls:"neg"});
+    if(state.dir !== "balanced") chips.push({label:"-"+LR_SPLIT+" psi "+(state.dir==="right"?"left":"right")+" side (dominant turn)", cls:"neg"});
+
+    var chipsEl = $("chips");
+    chipsEl.innerHTML = "";
+    chips.forEach(function(ch){
+      var el = document.createElement("span");
+      el.className = "chip" + (ch.cls ? " "+ch.cls : "");
+      el.textContent = ch.label;
+      chipsEl.appendChild(el);
+    });
+
+    saveState();
+  }
+
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function nowHM(){
+    var d = new Date();
+    return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+  }
+  function displayDate(iso){
+    if(!iso) return "";
+    var p = iso.split("-");
+    var d = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+    return d.toLocaleDateString('en-AU', {day:'2-digit',month:'short',year:'numeric'});
+  }
+  function readMeasured(){
+    var corners = ["FL","FR","RL","RR"];
+    var out = {};
+    corners.forEach(function(pos){
+      out[pos] = {
+        cold: $("m"+pos+"Cold").value.trim(),
+        hot: $("m"+pos+"Hot").value.trim()
+      };
+    });
+    return out;
+  }
+  function measuredSummary(measured){
+    if(!measured) return "";
+    var corners = ["FL","FR","RL","RR"];
+    var parts = corners
+      .filter(function(pos){ return measured[pos] && (measured[pos].cold || measured[pos].hot); })
+      .map(function(pos){
+        var m = measured[pos];
+        return pos + " " + (m.cold || "–") + "/" + (m.hot || "–");
+      });
+    return parts.join("  ·  ");
+  }
+
+  function renderLog(){
+    var list = $("logList");
+    var entries = [];
+    try{ entries = JSON.parse(localStorage.getItem("ktp_log") || "[]"); }catch(e){}
+    if(!entries.length){
+      list.innerHTML = '<p class="empty-note">No saved sessions yet.</p>';
+      return;
+    }
+    list.innerHTML = "";
+    entries.slice().reverse().forEach(function(entry, revIdx){
+      var idx = entries.length - 1 - revIdx;
+      var div = document.createElement("div");
+      div.className = "log-entry";
+      var measuredText = measuredSummary(entry.measured);
+      div.innerHTML =
+        '<div class="row1"><span>'+entry.track+'</span><span>'+entry.date+(entry.time?' '+entry.time:'')+'</span></div>' +
+        '<div class="row2">'+entry.brand+' '+entry.compound+' &middot; '+entry.rim+' rim &middot; '+entry.grip+' grip &middot; '+entry.dir+' &middot; '+entry.temp+'&deg;C</div>' +
+        '<div class="row2">Suggested cold FL '+entry.flCold+' / FR '+entry.frCold+' / RL '+entry.rlCold+' / RR '+entry.rrCold+' psi</div>' +
+        (measuredText ? '<div class="row2">Measured (cold/hot psi): '+measuredText+'</div>' : '') +
+        (entry.notes ? '<div class="row3">'+entry.notes.replace(/</g,"&lt;")+'</div>' : "") +
+        '<button class="del" type="button" data-idx="'+idx+'">Remove</button>';
+      list.appendChild(div);
+    });
+    list.querySelectorAll(".del").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var i = parseInt(btn.getAttribute("data-idx"), 10);
+        try{
+          var arr = JSON.parse(localStorage.getItem("ktp_log") || "[]");
+          arr.splice(i,1);
+          localStorage.setItem("ktp_log", JSON.stringify(arr));
+        }catch(e){}
+        renderLog();
+      });
+    });
+  }
+
+  function saveLogEntry(){
+    var c = getCompound();
+    var dateVal = $("logDate").value || todayISO();
+    var entry = {
+      date: displayDate(dateVal),
+      time: $("logTime").value || "",
+      track: state.track,
+      brand: state.brand.charAt(0).toUpperCase()+state.brand.slice(1),
+      compound: c.label,
+      rim: getRim().label,
+      grip: state.grip === "low" ? "Low" : (state.grip === "high" ? "High" : "Normal"),
+      dir: state.dir === "right" ? "More right-handers" : (state.dir === "left" ? "More left-handers" : "Balanced"),
+      temp: $("logTemp").value || state.temp,
+      flCold: $("fCold").textContent,
+      frCold: $("fCold2").textContent,
+      rlCold: $("rCold").textContent,
+      rrCold: $("rCold2").textContent,
+      measured: readMeasured(),
+      notes: $("notesField").value.trim()
+    };
+    try{
+      var arr = JSON.parse(localStorage.getItem("ktp_log") || "[]");
+      arr.push(entry);
+      localStorage.setItem("ktp_log", JSON.stringify(arr));
+    }catch(e){}
+    $("notesField").value = "";
+    ["FL","FR","RL","RR"].forEach(function(pos){
+      $("m"+pos+"Cold").value = "";
+      $("m"+pos+"Hot").value = "";
+    });
+    $("logDate").value = todayISO();
+    $("logTime").value = nowHM();
+    renderLog();
+  }
+
+  function wireUp(){
+    $("brandSeg").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-brand]");
+      if(!btn) return;
+      state.brand = btn.getAttribute("data-brand");
+      setSeg("brandSeg","data-brand",state.brand);
+      populateCompounds();
+      calc();
+    });
+    $("compoundSelect").addEventListener("change", function(){
+      state.compound = this.value;
+      calc();
+    });
+    $("rimSelect").addEventListener("change", function(){
+      state.rim = this.value;
+      calc();
+    });
+    $("gripSeg").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-grip]");
+      if(!btn) return;
+      state.grip = btn.getAttribute("data-grip");
+      setSeg("gripSeg","data-grip",state.grip);
+      calc();
+    });
+    $("dirSeg").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-dir]");
+      if(!btn) return;
+      state.dir = btn.getAttribute("data-dir");
+      setSeg("dirSeg","data-dir",state.dir);
+      calc();
+    });
+    $("tempRange").addEventListener("input", function(){
+      state.temp = parseInt(this.value,10);
+      $("tempVal").textContent = state.temp + "°C";
+      calc();
+    });
+    $("trackSelect").addEventListener("change", function(){
+      state.track = this.value;
+      updateTrackNote();
+      applyTrackProfile();
+      calc();
+    });
+    $("saveTrackProfile").addEventListener("click", function(){
+      var profiles = loadTrackProfiles();
+      profiles[state.track] = {
+        grip: state.grip,
+        dir: state.dir,
+        date: new Date().toLocaleDateString('en-AU', {day:'2-digit',month:'short',year:'numeric'})
+      };
+      saveTrackProfiles(profiles);
+      applyTrackProfile();
+    });
+    $("clearTrackProfile").addEventListener("click", function(){
+      var profiles = loadTrackProfiles();
+      delete profiles[state.track];
+      saveTrackProfiles(profiles);
+      applyTrackProfile();
+    });
+    $("saveLog").addEventListener("click", saveLogEntry);
+  }
+
+  function init(){
+    loadState();
+    populateCompounds();
+    populateRims();
+    populateTracks();
+    setSeg("brandSeg","data-brand",state.brand);
+    setSeg("gripSeg","data-grip",state.grip);
+    setSeg("dirSeg","data-dir",state.dir);
+    $("tempRange").value = state.temp;
+    $("tempVal").textContent = state.temp + "°C";
+    $("logDate").value = todayISO();
+    $("logTime").value = nowHM();
+    $("logTemp").value = state.temp;
+    wireUp();
+    applyTrackProfile();
+    calc();
+    renderLog();
+  }
+
+  init();
+})();
+</script>
