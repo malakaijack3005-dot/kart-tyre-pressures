@@ -646,8 +646,8 @@
     $("rHot2").textContent = "Hot target ~" + fmt(rrHot) + " psi";
 
     var splitText = state.dir === "balanced"
-      ? "No left/right split — track marked balanced."
-      : "Left/right split: " + (state.dir === "right" ? "left" : "right") + " side is −" + LR_SPLIT + " psi (works harder through the dominant " + (state.dir === "right" ? "right-handers" : "left-handers") + ").";
+      ? "FL = FR and RL = RR right now. To split them, set “Which way does the track turn more today?” above to Right or Left — the side working harder runs a lower cold fill."
+      : "Left/right split active: " + (state.dir === "right" ? "left" : "right") + " side is −" + LR_SPLIT + " psi cold (works harder and runs hotter through the dominant " + (state.dir === "right" ? "right-handers" : "left-handers") + ").";
     $("frontSplitNote").textContent = splitText;
     $("rearSplitNote").textContent = splitText;
 
