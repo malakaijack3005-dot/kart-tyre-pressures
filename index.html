@@ -304,6 +304,29 @@
 
   footer{text-align:center;font-size:12.5px;color:#7C7392;padding-top:6px;}
   footer span{color:var(--lilac);font-weight:600;}
+
+  /* ---------- kart setup ---------- */
+  .k-list{display:flex;flex-direction:column;gap:10px;}
+  .k-summary{font-size:13px;color:var(--dim);line-height:1.6;}
+  .k-summary strong{color:#fff;font-weight:600;}
+  .k-group{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#9B90B5;margin-top:6px;}
+  .k-row{padding:14px 16px;border-radius:14px;display:flex;flex-direction:column;gap:6px;background:var(--inset-bg);border:1px solid rgba(168,120,255,.12);}
+  .k-row .top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .k-row .l{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#CDBFE8;}
+  .k-row .tag{flex:none;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;color:var(--soft);border:1px solid rgba(168,120,255,.25);}
+  .k-row .tag.f{background:rgba(168,85,247,.16);border-color:rgba(196,132,252,.4);color:#D9BEFF;}
+  .k-row .v{font-size:15.5px;font-weight:600;color:#fff;line-height:1.4;}
+  .k-row .w{font-size:12.5px;color:var(--dim);line-height:1.55;}
+  .k-row .w.x{color:#C9A8FF;}
+  .k-row.has-why{cursor:pointer;}
+  .k-row .w.why{display:none;}
+  .k-row.open .w.why{display:block;}
+  .k-row .more{font-size:12px;color:var(--lilac);}
+  .k-row.open .more{display:none;}
+  .k-hw{margin:0;padding-left:18px;font-size:13px;color:var(--dim);line-height:1.65;}
+  .k-hw li{margin-bottom:4px;}
+  details.sub{padding:14px 16px;border-radius:14px;background:var(--inset-bg);box-shadow:none;border-color:rgba(168,120,255,.12);}
+  .track-item .venue.lean{color:#B9A6E6;}
 </style>
 </head>
 <body>
@@ -460,6 +483,32 @@
 </div>
 
 <div class="card">
+  <h2>Kart setup<span class="eyebrow-rule"></span></h2>
+  <div class="field">
+    <label for="kbrandSelect">Kart / chassis brand</label>
+    <select id="kbrandSelect"></select>
+  </div>
+  <div class="field">
+    <label for="kclassSelect">Class</label>
+    <select id="kclassSelect"></select>
+  </div>
+  <div class="field">
+    <label for="kheightSelect">Driver height (used for the OTK-group seat chart)</label>
+    <select id="kheightSelect"></select>
+  </div>
+  <div id="setupRows" class="k-list"></div>
+  <details class="sub">
+    <summary id="brandRefTitle">About your kart adjustments</summary>
+    <div id="brandRefBody" style="margin-top:12px;"></div>
+  </details>
+  <div class="field">
+    <label for="fixSelect">Something not right? Pick what the kart is doing</label>
+    <select id="fixSelect"></select>
+  </div>
+  <div id="fixList" class="k-list"></div>
+</div>
+
+<div class="card">
   <h2>Session log<span class="eyebrow-rule"></span></h2>
 
   <div class="log-datetime">
@@ -491,6 +540,12 @@
   <div class="field">
     <label for="notesField">Notes</label>
     <textarea id="notesField" placeholder="e.g. good balance mid-corner, a bit loose on exit"></textarea>
+  </div>
+
+  <div class="field">
+    <label for="setupUsed">Kart setup you ran (rear width, caster, axle, hubs…)</label>
+    <textarea id="setupUsed" placeholder="e.g. rear 1380 mm, standard 92 mm hubs, axle N, neutral caster, 1 mm toe out"></textarea>
+    <button class="btn ghost" id="fillSetup" type="button" style="margin-top:8px;">Fill with the recommended setup</button>
   </div>
 
   <button class="btn" id="saveLog" type="button">Save this session to log</button>
@@ -526,6 +581,15 @@
     <br>&middot; <a href="https://www.kartsportnews.com/2025/01/28/cooloola-re-built/" target="_blank" rel="noopener">KartSportNews &ndash; Cooloola Coast rebuild report</a>
     <br>&middot; <a href="https://kartclass.com/blogs/news/best-outdoor-go-kart-tracks-in-queensland" target="_blank" rel="noopener">KartClass &ndash; QLD outdoor track lengths &amp; turn counts</a>
     <br>&middot; <a href="https://forums.kartpulse.com/uploads/default/original/1X/9b7c2e0ca91fc49233ae65ac3a9b4c9472d3bea1.pdf" target="_blank" rel="noopener">CRG Factory Race Team / SSC Racing &ndash; chassis &amp; tyre setup manual</a>
+    <br>&middot; <a href="https://forums.kartpulse.com/uploads/short-url/r31B3z0cApoR43teuMisMgqxLzq.pdf" target="_blank" rel="noopener">OTK / Tony Kart chassis setup guide (also covers Exprit, Freeline)</a>
+    <br>&middot; <a href="https://www.eccarburetors.com/assets/images/Kosmic-Kart-Setup-Guide.pdf" target="_blank" rel="noopener">Kosmic Owner&rsquo;s Knowledge Packet (Remo Racing, Australia)</a>
+    <br>&middot; <a href="https://www.eccarburetors.com/assets/images/Arrow-Kart-Setup-Guide.pdf" target="_blank" rel="noopener">Arrow Karts owner&rsquo;s manual &amp; setup guide (Drew Price Engineering, Victoria)</a>
+    <br>&middot; <a href="https://www.birelart.com/public/immagini/download/TECHNICAL_DOCUMENTATION/SETUP%20KART%20OK.pdf" target="_blank" rel="noopener">Birel ART official setup table (OK range)</a>
+    <br>&middot; <a href="https://www.fastech-racing.com/Italkart%20Chassis%20Setup%20Guide.pdf" target="_blank" rel="noopener">Italkart chassis setup guide</a>
+    <br>&middot; <a href="https://www.eccarburetors.com/assets/images/IPK-Praga-KART-SETUP-2017.pdf" target="_blank" rel="noopener">IPK / Praga 2017 chassis setup guide</a>
+    <br>&middot; <a href="https://kartletix.com/2025/02/20/kart-setup-adjustments-chassis/" target="_blank" rel="noopener">KartletiX &ndash; kart setup adjustments (chassis)</a>
+    <br>&middot; <a href="https://www.queensland.com/au/en/things-to-do/attractions/p-68ba1997cad965af74ecbb10-warwick-kart-club-at-sandy-creek-raceway" target="_blank" rel="noopener">Queensland.com &ndash; Sandy Creek Raceway (Warwick) description</a>
+    <br><br><strong>On kart setup:</strong> where a manufacturer published a table or guide for its own chassis (Birel ART, IPK/Praga, Arrow, OTK/Tony Kart and the OTK-group brands, Kosmic, CRG, Italkart) the value is tagged Factory or Manual. Energy, Parolin, Kart Republic, FA Kart and unlisted brands had no published table I could find, so they use General guidance &mdash; what those manufacturers broadly agree on. The manufacturers disagree in a few places (front ride height, caster on very low grip, axle stiffness on low grip, rear torsion bar in the wet, tyre pressure for understeer); those are flagged so you can test one change at a time. Track type (short/tight vs long/flowing) is inferred from the published lap length, except Sandy Creek which is described as one of the fastest tracks in Queensland. Setup values are starting points &mdash; check your kart&rsquo;s own manual and your class rules for legal widths and parts.
     <br><br>Bridgestone YDS and the OTK/CRG wheel entries have very little published pressure data, so they're treated as close to the generic baseline &mdash; a rougher starting point than the others until you log your own numbers against them.
     <br><br><strong>On left/right split &mdash; what's a rule of thumb vs what's real:</strong> cornering weight transfers onto the outside tyres, so a track with more right-hand corners loads and heats the left-side tyres harder (and vice versa) &mdash; that side gets set 0.15 psi lower cold as a <em>starting-point</em> heuristic. But there is no published, authoritative left/right psi number &mdash; the CRG factory manual's own method isn't a formula either: run equal pressures as a baseline, then after a session record each corner's actual hot reading and nudge that corner's own cold fill until all four rise a consistent ~2 psi. That's exactly what the Measured pressures grid in the Session Log is for.
     <br><br><strong>Your own data beats all of this:</strong> your sync code (top of the page) carries your session log and remembered track settings to any device you open the same code on. Tap "Remember grip &amp; direction for this track" once you know a track, and log your measured pressures every session &mdash; that becomes more accurate than any generic source here.
@@ -542,35 +606,35 @@
     dunlop: {
       label: "Dunlop",
       items: [
-        {id:"sl1", label:"SL1 (KA/Cadet control, hard)", cold:12, rise:2},
+        {id:"sl1", label:"SL1 (KA/Cadet control, hard)", cold:12, rise:2, hard:true},
         {id:"d5", label:"D5 (slick)", cold:12, rise:2},
-        {id:"kt-wet", label:"KT (wet)", cold:10, rise:1}
+        {id:"kt-wet", label:"KT (wet)", cold:10, rise:1, wet:true}
       ]
     },
     mg: {
       label: "MG",
       items: [
-        {id:"red-sh", label:"Red SH (Cadet/Junior, low-med HP)", cold:12.5, rise:1},
+        {id:"red-sh", label:"Red SH (Cadet/Junior, low-med HP)", cold:12.5, rise:1, hard:true},
         {id:"yellow-sm", label:"Yellow SM (TaG/Shifter)", cold:12, rise:2.5},
-        {id:"white-sw", label:"White SW (wet)", cold:9, rise:1}
+        {id:"white-sw", label:"White SW (wet)", cold:9, rise:1, wet:true}
       ]
     },
     vega: {
       label: "Vega",
       items: [
         {id:"white-xm4", label:"White XM4 (medium)", cold:9, rise:1.5},
-        {id:"green-xh4", label:"Green XH4 (CIK-FIA hard)", cold:10.5, rise:2},
+        {id:"green-xh4", label:"Green XH4 (CIK-FIA hard)", cold:10.5, rise:2, hard:true},
         {id:"red-vah", label:"Red VAH (endurance)", cold:11, rise:2},
-        {id:"rain-w6", label:"Rain W6 (wet)", cold:8, rise:1}
+        {id:"rain-w6", label:"Rain W6 (wet)", cold:8, rise:1, wet:true}
       ]
     },
     lecont: {
       label: "LeCont",
       items: [
-        {id:"lh03", label:"LH03 (KA4/KA3/TaG125 Restricted/Rotax)", cold:10.25, rise:2},
-        {id:"svb", label:"SVB (KA2/Junior Performance/TaG125)", cold:10, rise:2},
+        {id:"lh03", label:"LH03 (KA4/KA3/TaG125 Restricted/Rotax)", cold:10.25, rise:2, hard:true},
+        {id:"svb", label:"SVB (KA2/Junior Performance/TaG125)", cold:10, rise:2, hard:true},
         {id:"svc", label:"SVC (X30/KZ2/Open Performance)", cold:10.25, rise:2},
-        {id:"sv1", label:"SV1 (wet, all classes)", cold:9, rise:1}
+        {id:"sv1", label:"SV1 (wet, all classes)", cold:9, rise:1, wet:true}
       ]
     },
     maxxis: {
@@ -582,7 +646,7 @@
     bridgestone: {
       label: "Bridgestone",
       items: [
-        {id:"yds", label:"YDS (club, low data)", cold:11, rise:2}
+        {id:"yds", label:"YDS (club, low data)", cold:11, rise:2, hard:true}
       ]
     }
   };
@@ -632,7 +696,7 @@
   var LR_SPLIT = 0.15;
   var CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
 
-  var state = {brand:"dunlop", compound:"sl1", rim:"alloy", grip:"med", dir:"balanced", temp:24, track:TRACKS[0].name};
+  var state = {brand:"dunlop", compound:"sl1", rim:"alloy", grip:"med", dir:"balanced", temp:24, track:TRACKS[0].name, kbrand:"tonykart", kclass:"senior", kheight:"175"};
   var trackProfiles = {};
   var logEntries = [];
   var myCode = null;
@@ -754,6 +818,7 @@
         refreshAccountUI();
         populateCompounds();
         populateRims();
+        populateKartControls();
         populateTracks();
         setSeg("gripSeg","data-grip",state.grip);
         setSeg("dirSeg","data-dir",state.dir);
@@ -850,7 +915,8 @@
       var facts = trackFacts(t);
       d.innerHTML = '<div class="name">'+t.name+'</div><div class="venue">'+t.venue+'</div>'
         + (facts ? '<div class="venue">'+facts+'</div>' : '')
-        + (t.note ? '<div class="venue">'+t.note+(t.source ? ' (Source: '+t.source+')' : '')+'</div>' : '');
+        + (t.note ? '<div class="venue">'+t.note+(t.source ? ' (Source: '+t.source+')' : '')+'</div>' : '')
+        + (trackChar(t) ? '<div class="venue lean">Setup lean: '+trackChar(t).label+' \u2014 '+trackChar(t).note+'</div>' : '');
       grid.appendChild(d);
     });
   }
@@ -955,6 +1021,8 @@
     var rng = $("tempRange");
     rng.style.setProperty("--fill", ((state.temp - rng.min) / (rng.max - rng.min) * 100) + "%");
 
+    renderSetup();
+
     saveLocal();
     pushCloud();
   }
@@ -1017,6 +1085,8 @@
         '<div class="row2">Suggested cold FL '+entry.flCold+' / FR '+entry.frCold+' / RL '+entry.rlCold+' / RR '+entry.rrCold+' psi</div>' +
         (measuredText ? '<div class="row2">Measured (cold/hot psi): '+measuredText+'</div>' : '') +
         (entry.weather ? '<div class="row2">Weather: '+entry.weather+'</div>' : '') +
+        (entry.kart ? '<div class="row2">Kart: '+entry.kart.replace(/</g,"&lt;")+'</div>' : '') +
+        (entry.setup ? '<div class="row2">Setup: '+entry.setup.replace(/</g,"&lt;")+'</div>' : '') +
         (entry.notes ? '<div class="row3">'+entry.notes.replace(/</g,"&lt;")+'</div>' : "") +
         '<button class="del" type="button" data-idx="'+idx+'">Remove</button>';
       list.appendChild(div);
@@ -1050,7 +1120,9 @@
       rlCold: $("rCold").textContent,
       rrCold: $("rCold2").textContent,
       measured: readMeasured(),
-      notes: $("notesField").value.trim()
+      notes: $("notesField").value.trim(),
+      kart: kartBrand().label + " \u00b7 " + (KART_CLASSES.find(function(k){ return k.id === state.kclass; }) || {label:""}).label,
+      setup: $("setupUsed").value.trim()
     };
     var btn = $("saveLog");
     btn.disabled = true;
@@ -1068,6 +1140,7 @@
       saveLocal();
       pushCloud();
       $("notesField").value = "";
+      $("setupUsed").value = "";
       ["FL","FR","RL","RR"].forEach(function(pos){
         $("m"+pos+"Cold").value = "";
         $("m"+pos+"Hot").value = "";
@@ -1232,6 +1305,578 @@
     });
   }
 
+  // ---------- Kart setup ----------
+
+  var KART_CLASSES = [
+    {id:"cadet", label:"Cadet (mini / micro)"},
+    {id:"junior", label:"Junior (KA3 / OK-Junior / Junior Max)"},
+    {id:"senior", label:"Senior (TaG / X30 / KA2 / 100cc)"},
+    {id:"shifter", label:"Shifter / KZ"}
+  ];
+
+  var DRIVER_HEIGHTS = [
+    {id:"155", label:"150–160 cm"},
+    {id:"165", label:"160–170 cm"},
+    {id:"175", label:"170–180 cm"},
+    {id:"185", label:"180–190 cm"}
+  ];
+
+  // OTK / Tony Kart official seat measurements by driver height (mm)
+  var OTK_SEAT = {"155":{a:605,b:600,c:240},"165":{a:615,b:620,c:230},"175":{a:625,b:630,c:200},"185":{a:635,b:640,c:205}};
+
+  var SRC = {
+    otk:{label:"OTK / Tony Kart setup guide", url:"https://forums.kartpulse.com/uploads/short-url/r31B3z0cApoR43teuMisMgqxLzq.pdf"},
+    kosmic:{label:"Kosmic Owner's Knowledge Packet (Remo Racing, Australia)", url:"https://www.eccarburetors.com/assets/images/Kosmic-Kart-Setup-Guide.pdf"},
+    arrow:{label:"Arrow Karts owner's manual & setup guide (Drew Price Engineering, Vic)", url:"https://www.eccarburetors.com/assets/images/Arrow-Kart-Setup-Guide.pdf"},
+    crg:{label:"CRG Factory Race Team / SSC Racing setup manual", url:"https://forums.kartpulse.com/uploads/default/original/1X/9b7c2e0ca91fc49233ae65ac3a9b4c9472d3bea1.pdf"},
+    birel:{label:"Birel ART official setup table (OK range)", url:"https://www.birelart.com/public/immagini/download/TECHNICAL_DOCUMENTATION/SETUP%20KART%20OK.pdf"},
+    italkart:{label:"Italkart chassis setup guide", url:"https://www.fastech-racing.com/Italkart%20Chassis%20Setup%20Guide.pdf"},
+    ipk:{label:"IPK / Praga 2017 chassis setup guide", url:"https://www.eccarburetors.com/assets/images/IPK-Praga-KART-SETUP-2017.pdf"},
+    general:{label:"KartletiX – kart setup adjustments (chassis)", url:"https://kartletix.com/2025/02/20/kart-setup-adjustments-chassis/"}
+  };
+
+  var KART_BRANDS = [
+    {id:"tonykart", label:"Tony Kart", fam:"otk", group:"Manufacturer data", src:"otk"},
+    {id:"kosmic", label:"Kosmic", fam:"kosmic", group:"Manufacturer data", src:"kosmic"},
+    {id:"exprit", label:"Exprit (OTK group)", fam:"otk", group:"Manufacturer data", src:"otk"},
+    {id:"freeline", label:"Freeline (OTK group)", fam:"otk", group:"Manufacturer data", src:"otk"},
+    {id:"arrow", label:"Arrow", fam:"arrow", group:"Manufacturer data", src:"arrow"},
+    {id:"crg", label:"CRG / Maranello", fam:"crg", group:"Manufacturer data", src:"crg"},
+    {id:"birel", label:"Birel ART", fam:"birel", group:"Manufacturer data", src:"birel"},
+    {id:"italkart", label:"Italkart", fam:"italkart", group:"Manufacturer data", src:"italkart"},
+    {id:"ipk", label:"IPK / Praga", fam:"ipk", group:"Manufacturer data", src:"ipk"},
+    {id:"energy", label:"Energy", fam:"general", group:"General guidance (no factory table found)", src:"general"},
+    {id:"parolin", label:"Parolin", fam:"general", group:"General guidance (no factory table found)", src:"general"},
+    {id:"kartrepublic", label:"Kart Republic", fam:"general", group:"General guidance (no factory table found)", src:"general"},
+    {id:"fakart", label:"FA Kart", fam:"general", group:"General guidance (no factory table found)", src:"general"},
+    {id:"other", label:"Other / not listed", fam:"general", group:"General guidance (no factory table found)", src:"general"}
+  ];
+
+  var KART_HW = {
+    otk: [
+      "Seat position by driver height (chart above), plus adjustable seat stays in several lengths",
+      "Rear axles Q / U / N (standard, medium) / H / HH — short 1000 mm axle (vs 1030 mm) in N and HH",
+      "Rear hubs: aluminium 56 / 92 mm; magnesium 56 / 92 / 115 / 145 mm",
+      "Multi-position rear ride height (standard = middle); adjustable rear torsion bar (most run without)",
+      "Front width by spacers and front hubs (80 / 95 / 110 mm); front height by two king-pin washers",
+      "Camber and caster from multi-position eccentric king-pin washers (neutral = both arrows forward)",
+      "Steering column tie-rod holes (near the column = lighter, less direct); optional inclined steering hub",
+      "Front torsion bar: flat (stiffest, horizontal = standard), round Chrome (soft), Silver (medium), Gold/Brown (hard)",
+      "Wheels AXP (aluminium), MXP (magnesium, supplied), MXC (magnesium); brake discs 180 / 206 mm; optional front spoiler"
+    ],
+    kosmic: [
+      "Rear track: start at the maximum (senior 55″ / junior 53¼″), then only narrow",
+      "Three-position rear axle carriage (centre = standard); axle Type N is standard (about 80% of use)",
+      "Front ride height from three washers (2 × 4 mm + 1 × 1.5 mm); standard = one 4 mm washer on top of the stub",
+      "HST 25 mm front stub with 3–5 mm spacers inside the standard 90 mm hub",
+      "Caster/camber: 4-position eccentrics (8 or 10 mm) or the 20-position ball-bearing system; Remo Racing suggests starting at full caster",
+      "Front torsion bars: flat, or round 1.0 / 1.5 / 2.0 mm wall (2.0 mm is stiffest); rear torsion bar is a single 'blade' style",
+      "Two supplemental seat struts supplied (one each side) in lengths 280–400 mm",
+      "Standard OTK 92 mm rear hubs recommended as the starting point"
+    ],
+    arrow: [
+      "Height-adjustable rear axle (standard = fully down) and height-adjustable front stub axles (spacers)",
+      "Ackerman set at two stub-arm holes and at the steering-column 'spade' (inner holes = more Ackerman)",
+      "Caster/camber from concentric king-pin washers with indicator lines (min / neutral / max caster)",
+      "Front width in 5 / 10 / 20 mm spacers; rear track in 5 mm-per-side steps (class maximum 1400 mm overall)",
+      "Rear hubs in different lengths (40 mm axle hubs use a locating insert); seat stays (up to two sets)",
+      "Rear torsion bar blade (vertical = full stiff, horizontal = soft, or removed); removable front torsion bar; 4th-rail tension bolts",
+      "3-bearing rear axle — loosening the centre bearing can add rear grip on a slippery track",
+      "Side-pod bars (tight for most conditions) and crash bars; seat brackets in 12 mm positions"
+    ],
+    crg: [
+      "Front caster/camber adjusters I / II / III (factory neutral II / II; max caster III / III)",
+      "Three rear hub lengths; rear track from 54″ to 55″ (best starting point 54¾″)",
+      "Axle stiffness codes from soft to very hard (K, MAF, MB, AZ, MZ, ZZ, MET30 …); MET30 is a good general axle",
+      "Seat struts (up to four), rear torsion bar (flat / vertical / removed), side-pod bars kept loose",
+      "Wheels: spun aluminium is softer than cast/forged magnesium; wheel offset changes effective axle stiffness",
+      "Base weight distribution 43% front / 57% rear, 50/50 left-right"
+    ],
+    birel: [
+      "Front wheel track, front hub (standard / long), front height frame (low / central / high)",
+      "Caster set separately at the top and under the king-pin (in degrees), camber in mm",
+      "Steering wheel position (central / high hole / low hole) and seat position from the seat chart",
+      "Additional seat supports left and right (1–2 each), rear track (cm), axle length 1020 / 1000 mm",
+      "Rear hubs in aluminium or magnesium, L.90 / L.100; axle types F / M / T / B / R; rear frame height",
+      "Wheels magnesium or aluminium, sizes 130–210 (dry) / 130–180 (rain)"
+    ],
+    italkart: [
+      "Rear axle height adjustment (standard = middle) and height-adjustable front stub axles",
+      "Ackerman at the stub arms (two holes) and at the steering-column spade",
+      "Caster in three positions using the dots (4 dots to the front = max, to the tank = neutral, to the back = min)",
+      "Axles from SA (softest, non-shifter only) and S (second softest) upward",
+      "Rear hubs shorter/longer, seat stays, 4th-rail tension bolts, adjustable/removable torsion bars"
+    ],
+    ipk: [
+      "CCS camber & caster system (1° and 2° inserts)",
+      "Front height with small (A) and big (B) spindle spacers",
+      "Ackerman with five spindle tie-rod positions plus three steering-column positions",
+      "Axle scale from soft to hard: S – MS – RGF – M – MH – H – EH – X",
+      "Separate dry / wet tables for rear & front track, hubs, toe and camber"
+    ],
+    general: [
+      "Front: track width (spacers), ride height, caster, camber, toe, Ackerman, torsion bar",
+      "Rear: track width, hub length, axle stiffness, ride height, seat stays, torsion bar, bearing carriers",
+      "Chassis: seat position, ballast placement, wheel material, tyre pressures",
+      "No factory table was found for this brand, so the recommendations use the guidance that CRG, OTK, Arrow, Italkart and Birel agree on. Use your kart's own manual for exact hardware positions."
+    ]
+  };
+
+  var SETTINGS = [
+    {key:"frontTrack", group:"Front", label:"Front track"},
+    {key:"frontHeight", group:"Front", label:"Front ride height"},
+    {key:"caster", group:"Front", label:"Caster"},
+    {key:"camber", group:"Front", label:"Camber"},
+    {key:"toe", group:"Front", label:"Front toe"},
+    {key:"ackerman", group:"Front", label:"Ackerman"},
+    {key:"steering", group:"Front", label:"Steering wheel position", fam:["birel"]},
+    {key:"rearTrack", group:"Rear", label:"Rear track (overall)"},
+    {key:"rearHubs", group:"Rear", label:"Rear hubs"},
+    {key:"axle", group:"Rear", label:"Axle"},
+    {key:"rearHeight", group:"Rear", label:"Rear ride height"},
+    {key:"struts", group:"Rear", label:"Seat stays / struts"},
+    {key:"rearBar", group:"Rear", label:"Rear torsion bar"},
+    {key:"rail", group:"Rear", label:"4th-rail tension bolt", fam:["arrow","italkart"]},
+    {key:"seat", group:"Chassis", label:"Seat position"},
+    {key:"ballast", group:"Chassis", label:"Ballast"},
+    {key:"wheels", group:"Chassis", label:"Wheels"},
+    {key:"pressures", group:"Chassis", label:"Tyre pressures (cold)"}
+  ];
+
+  // ----- General guidance (what the manufacturers broadly agree on) -----
+  var GEN = {
+    frontTrack: function(c){
+      if(c.cls === "cadet") return {base:"≈ 990 mm overall (mini kart)", wet:"≈ 1020 mm overall",
+        why:"Mini-kart front track from IPK (dry 990 mm / wet 1020 mm); check your own kart manual."};
+      return {base:"Factory standard spacers — start here",
+        low:"Widen in 5 mm-per-side steps if it understeers on turn-in",
+        high:"Standard, or narrow 5 mm per side if the front is over-sharp or the rear slides",
+        wet:"As wide as you can go (long hubs or stub extensions)",
+        why:"A wider front track loads the inside front on turn-in and helps lift the inner rear (OTK, Arrow, Italkart, CRG). Kosmic reports the opposite on very low grip — change one step at a time."};
+    },
+    frontHeight: {base:"Factory middle position", low:"Middle to higher", high:"Lower", wet:"Higher",
+      why:"Higher front ride height gives more bite on turn-in but less mid/exit (OTK); Birel runs low in high grip and high in rain. Kosmic sees the reverse on grippy tracks."},
+    caster: {base:"Neutral (factory)", low:"Neutral to +1 step — reduce it if the rear slides mid-corner", high:"+1 step (helps the inner rear lift; drive smoothly)", wet:"Maximum caster",
+      why:"More caster = more turn-in but heavier steering (OTK, Arrow, Kosmic). Full caster in the wet is a must (Arrow, Italkart)."},
+    camber: {base:"0 / neutral", low:"0 to −2 mm", high:"−2 to −6 mm (Birel runs −6 / −8 mm)", wet:"0",
+      why:"Positive camber adds mid-corner front grip; negative removes it and helps when the front is too sharp on grippy or fast tracks (OTK)."},
+    toe: function(c){
+      var base = c.hard ? "3–6 mm out (hard tyre)" : "1–3 mm out";
+      return {base:base, low:base, high:"0–2 mm out", wet:"5–8 mm out",
+        why:"Dry sprint karts run 1–3 mm out in total; hard compounds 3–6 mm (CRG); 5–8 mm in the wet (OTK, CRG). Too much toe out also slows top speed."};
+    },
+    ackerman: function(c){
+      var base = c.character === "tight" ? "Inner holes (more Ackerman)"
+        : c.character === "fast" ? "Outer holes (less Ackerman)" : "Factory (outer holes)";
+      return {base:base, low:base, high:base, wet:base,
+        why:"More Ackerman = quicker direction change on stop-turn-go 180° corners; on fast sweepers into a long straight it costs top speed (Arrow, Italkart). Reduce it if the rear slides on entry."};
+    },
+    rearTrack: function(c){
+      if(c.cls === "cadet") return {base:"≈ 1095–1115 mm", low:"≈ 1095 mm", high:"≈ 1115 mm", wet:"≈ 1065 mm",
+        why:"Mini/rookie karts: IPK 1095 mm dry / 1065 mm wet, Arrow Midget/Rookie 1115 mm; check your own kart manual."};
+      if(c.cls === "junior") return {base:"1340–1350 mm", low:"1320–1340 mm", high:"1350–1360 mm (max)", wet:"1300–1340 mm",
+        why:"OTK starts 1360 mm-max classes at 1340–1350 mm; the low-grip and wet steps are scaled from the senior figures. Change in 5 mm-per-side steps."};
+      return {base:"1380–1395 mm (class max 1400)", low:"1360–1380 mm, narrowing in 5 mm-per-side steps", high:"1395–1400 mm (max width)", wet:"≈ 1340–1380 mm (narrower)",
+        why:"Narrower rear = more side grip but less stable; wider = more balanced but less peak grip (OTK, Arrow, Kosmic). Rear track is the most important single chassis variable (Arrow)."};
+    },
+    rearHubs: {base:"Standard length (start here)", low:"Longer hubs (more rear grip)", high:"Standard to shorter (frees the rear)", wet:"Standard",
+      why:"Longer hubs add stiffness and rear grip; shorter hubs free the kart and help exit understeer (Arrow, Italkart, OTK, KartletiX)."},
+    axle: {base:"Factory standard axle", low:"One step stiffer", high:"One step softer (or stay standard if it flexes and binds)", wet:"Standard to medium",
+      why:"Stiffer axle = more rear grip and slower to come in; softer frees the kart (CRG, OTK, KartletiX, Praga). Kosmic advises the reverse on very low grip — test one change at a time."},
+    rearHeight: {base:"Factory standard (middle / axle fully down on Arrow)", low:"Standard — don't lower the rear for grip", high:"Lower the rear (raise the axle one step) if it two-wheels or binds", wet:"Standard",
+      why:"Raising the axle lowers the rear ride height and frees the back; only do it if the kart two-wheels excessively (Arrow, Italkart, Kosmic, KartletiX)."},
+    struts: {base:"1 stay each side", low:"2 stays each side", high:"Loosen or remove", wet:"Loosen",
+      why:"Seat stays pass the driver's weight to the rear tyres for more grip (OTK, Kosmic, CRG); removing them frees the rear in high grip."},
+    rearBar: {base:"Off for most dry running", low:"Fit — blade horizontal for exit traction", high:"Remove", wet:"Brand-dependent (see notes)",
+      why:"The rear bar keeps the chassis flat and adds exit grip but stops the inner rear lifting; remove it as rubber goes down (OTK, Arrow, Italkart, Kosmic)."},
+    rail: {base:"Tight", low:"Tight", high:"Loosen until it turns freely; remove if very grippy or bumpy", wet:"Tight",
+      why:"A fitted 4th rail / side torsion bar adds grip; loosen or remove it as rubber builds (Arrow, Italkart)."},
+    seat: function(c){
+      var base = "Per your driver-height seat chart";
+      return {base:base, low:"Back 10–20 mm (more rear bite, esp. on hard tyres)", high:"Slightly forward and low", wet:base,
+        why:"Harder tyres/low grip: move the seat back 10–20 mm (OTK); understeer on exit: forward 12 mm; no traction on exit: back and more upright 12 mm (Arrow, Italkart)."};
+    },
+    ballast: {base:"On the seat: under it, behind it and on the left (opposite the engine); aim for ~43% front / 57% rear and 50/50 left-right", low:"Mount it higher on the seat back", high:"Keep it low", wet:"Keep it low",
+      why:"CRG base weight distribution 43/57 front/rear and 50/50 left/right; higher ballast adds weight transfer for low grip (OTK, CRG)."},
+    wheels: {base:"Your usual wheel", low:"Aluminium — warms the tyre up faster", high:"Magnesium — keeps the tyre cooler and frees the kart", wet:"Aluminium (magnesium corrodes)",
+      why:"Aluminium gives earlier grip but heats the tyre; magnesium is more consistent over a run (OTK, CRG, KartletiX)."}
+  };
+
+  // ----- Manufacturer-specific values (only where a manual / factory table says so) -----
+  var FAM = {
+    otk: {
+      frontTrack: {base:"Factory: 1 large spacer + 15 mm standard hubs", wet:"15 mm long hubs (very wide front)", why:"OTK: a wider front gives more grip at initial turn-in; extra-long hubs for the wet.", src:"Manual"},
+      frontHeight: {base:"Middle position", wet:"Middle position (wet setup runs the brown/hard front bar)", src:"Manual"},
+      caster: {base:"Both eccentric arrows forward (neutral)", wet:"Top arrow forward, bottom arrow back (more caster)", src:"Manual"},
+      camber: {base:"Both arrows forward (neutral)", wet:"1 click of positive camber on top", src:"Manual"},
+      toe: {base:"1–2 mm out", wet:"5–8 mm out (4 mm each side)", why:"OTK standard toe-out; only changed in the rain.", src:"Manual"},
+      rearTrack: function(c){
+        if(c.cls === "cadet") return null;
+        if(c.cls === "junior") return {base:"1340–1350 mm", low:"1320–1340 mm", high:"1350–1360 mm (max)", wet:"1300–1340 mm", why:"OTK: for classes with a 1360 mm maximum, start around 1340–1350 mm.", src:"Manual"};
+        return {base:"≈ 1380 mm (class max 1400) — standard 1390 mm dry set-up", low:"Narrower in small steps (narrow = more side grip)", high:"1390–1400 mm", wet:"≈ 1340 mm",
+          why:"OTK: for 1400 mm classes start around 1380 mm; its standard dry set-up is 1390 mm and wet 1340 mm.", src:"Manual"};
+      },
+      rearHubs: {base:"Standard 92 mm (start here)", low:"Longer (115 mm) — more stability and grip", high:"Shorter (56 mm) — frees the kart", wet:"Standard 92 mm",
+        why:"OTK: long hubs increase stability but can bind in a long race; shorter hubs give less grip. Aluminium gives earlier grip but is less consistent than magnesium.", src:"Manual"},
+      axle: {base:"Type N (medium) — your reference axle", low:"Type H or HH (stiffer) — slower to come in when cold", high:"Type N — avoid too soft (it flexes and binds); Q / U only for short heats or light drivers", wet:"Type N",
+        why:"OTK: N works in most conditions and is preferred in high grip; H/HH help when slippery.", src:"Manual"},
+      rearHeight: {base:"Middle position (standard)", src:"Manual"},
+      struts: {base:"1 supplementary stay each side", low:"Add stays or use the stiffer adjustable stay", src:"Manual", why:"OTK: one stay each side to start; extra stays add rear grip out of the corner."},
+      rearBar: {base:"Off — most run without it", low:"Fit if you need exit grip", high:"Off — frees the kart", wet:"Off", src:"Manual", why:"OTK: it stops the chassis lifting the inner wheel; remove it as grip increases."},
+      seat: function(c){
+        var s = OTK_SEAT[c.height] || OTK_SEAT["175"];
+        var base = "A " + s.a + " / B " + s.b + " / C " + s.c + " mm (OTK chart for your height)";
+        return {base:base, low:"Chart, then move back 10–20 mm", high:base, wet:base,
+          why:"OTK seat measurements by driver height; harder tyres or a shifter: seat 10–20 mm further back.", src:"Manual"};
+      },
+      ballast: {base:"Under the seat, in the back of the seat and on the left side (opposite the engine); some on the front of the frame if you need several kg", low:"Mount higher on the seat back", src:"Manual"},
+      wheels: {base:"MXP magnesium (supplied)", low:"AXP aluminium — grip after a couple of laps, heats the tyres quickly", high:"MXC magnesium — keeps tyre temperature down, frees the kart", wet:"AXP aluminium", src:"Manual"}
+    },
+    arrow: {
+      frontTrack: function(c){
+        if(c.wet) return {wet:"Front wheels as far out as possible (Kartech stub extensions add 60 mm)", src:"Manual"};
+        var sl = c.compound === "sl1" || c.compound === "yds";
+        var b = sl ? "1 × 10 mm + 1 × 5 mm spacers inside each front wheel"
+          : "1 × 20 mm + 1 × 5 mm (high-grip SL) up to 1 × 20 mm + 1 × 10 mm (open tyres) inside each front wheel";
+        return {base:b, low:b, high:b, why:"Arrow starting front track by tyre type; widen 5 mm at a time for turn-in understeer.", src:"Manual"};
+      },
+      frontHeight: {base:"Factory", low:"Lower the stub axles one spacer at a time for more front bite through the corner", high:"Raise the stubs one spacer if there is too much bite on turn-in", src:"Manual", why:"Arrow: lowering the stubs raises the front ride height (slower first reaction, more grip to the apex, flatter rear)."},
+      caster: {base:"Neutral (top indicator line back, bottom line front)", wet:"Maximum (both lines to the front)", src:"Manual", why:"Arrow: full caster in the wet is a must; reduce caster if the back slides into turns."},
+      camber: {base:"Zero on SL tyres (0–2 mm positive on open CIK tyres)", src:"Manual"},
+      rearTrack: function(c){
+        if(c.cls === "cadet") return {base:"≈ 1115 mm (Midget / Rookie)", src:"Manual", why:"Arrow Midget/Rookie rear track on SL tyres."};
+        var sl = c.compound === "sl1" || c.compound === "yds";
+        var b = sl ? "1330 mm (low-grip SL tyres — Dunlop SL1, Bridgestone YDS)"
+          : c.hard ? "1370 mm (SL) to 1385 mm (high-grip SL)" : "1385–1395 mm (open / CIK tyres)";
+        return {base:b, low:b + " — narrow 5 mm per side if the rear won't bite", high:b + " — widen 5 mm per side toward 1400 mm", wet:"Leave your dry width, or move the hubs in 10 mm per side (too narrow causes front understeer)",
+          why:"Arrow rear track by tyre; vary by no more than 5 mm each side per change.", src:"Manual"};
+      },
+      rearHeight: {base:"Axle fully down (standard — maximum rear ride height)", high:"Raise the axle one step only if it two-wheels excessively", src:"Manual"},
+      struts: {base:"Fit seat stays if there's no exit traction (up to two sets)", src:"Manual"},
+      rearBar: {base:"Optional", low:"Fit, blade horizontal — more traction off the turn", high:"Full soft, or remove", wet:"Fit, blade vertical (full stiff)", src:"Manual", why:"Arrow: torsion bar strategy by grip; on bumpy tracks remove it."},
+      ballast: {base:"Mostly under the front of the seat (crotch area)", low:"Light drivers: as high as possible on the seat", src:"Manual"}
+    },
+    crg: {
+      frontTrack: {base:"45½–46″ (≈ 1156–1168 mm)", low:"45–46″ (≈ 1143–1168 mm)", high:"44–44½″ (≈ 1118–1130 mm)", wet:"As far out as possible", src:"Manual"},
+      frontHeight: {base:"Middle", low:"Start in the middle; add shims for more front grip", wet:"As high as possible", src:"Manual"},
+      caster: {base:"II / II (factory neutral)", low:"III / III (maximum caster)", high:"III / III — try less as grip comes up, more as tyres wear", wet:"III / III (maximum)", src:"Manual"},
+      camber: {base:"Central", low:"Central", high:"−½° to 0°", wet:"Slightly more negative (III / II)", src:"Manual"},
+      toe: {base:"1–3 mm out (hard tyres 3–6 mm)", low:"1–3 mm out", high:"1–3 mm out", wet:"3–6 mm out each side", src:"Manual"},
+      rearTrack: function(c){
+        if(c.cls === "cadet") return null;
+        return {base:"54¾″ (≈ 1391 mm)", low:"54–54½″ (≈ 1372–1384 mm) for maximum grip", high:"55″ (≈ 1397 mm) for minimum grip", wet:"As narrow as possible — rear tread centre in line with the inside edge of the fronts", src:"Manual",
+          why:"CRG: narrower = more grip but less stable; start at 54¾″ so you can go either way."};
+      },
+      rearHubs: {base:"Medium", low:"Medium to long", high:"Shortest", wet:"Short", src:"Manual"},
+      axle: {base:"Medium (e.g. MET30 for general use)", low:"Medium to stiff", high:"Soft", wet:"Medium", src:"Manual"},
+      rearHeight: {base:"As low as possible (axle in highest position)", low:"As high as possible (axle in lowest position)", high:"As low as possible", wet:"As high as possible", src:"Manual"},
+      struts: {base:"2 each side (4 total)", low:"At least 2 each side", high:"Loosen or remove", wet:"Loosen", src:"Manual"},
+      rearBar: {base:"In, flat position", low:"In, flat position", high:"Remove", wet:"Remove", src:"Manual"},
+      ballast: {base:"43% front / 57% rear, 50/50 left-right; add lead as low as possible (higher only if your tracks are very green)", src:"Manual"},
+      wheels: {high:"Stiffer magnesium wheels give more grip than soft spun aluminium", wet:"Aluminium (magnesium corrodes)", src:"Manual"}
+    },
+    birel: {
+      frontTrack: {base:"1205 mm (standard front hubs)", high:"1205–1215 mm", low:"1215 mm", wet:"1250–1260 mm (long front hubs)", src:"Factory table", why:"Birel ART OK-range factory table (front wheel track)."},
+      frontHeight: {base:"Central", high:"Low", low:"Central", wet:"High", src:"Factory table"},
+      caster: {base:"Top 0.5° / under: neutral", high:"Top 1.5° / under 0.5°", low:"Top 0.5° / under: neutral", wet:"Top 1.5° / under 1.5°", src:"Factory table"},
+      camber: {base:"0 mm", high:"−6 to −8 mm", low:"−2 mm", wet:"0 mm", src:"Factory table"},
+      steering: {base:"Central", high:"High hole", low:"Central", wet:"Low hole", src:"Factory table"},
+      rearTrack: function(c){
+        if(c.cls === "cadet") return null;
+        return {base:"1400 mm", high:"1390–1400 mm (axle 1020 or 1000 mm)", low:"1400 mm", wet:"1360 mm", src:"Factory table", why:"Birel ART OK-range factory table (rear wheel track); axle length 1020 mm, or 1000 mm in high grip."};
+      },
+      rearHubs: {base:"Aluminium L.90", high:"Magnesium L.100", low:"Aluminium L.100", wet:"Aluminium L.90", src:"Factory table"},
+      axle: {base:"Type F", high:"Type F / M", low:"Type T – B – R", wet:"Type F – B", src:"Factory table", why:"Birel axle codes as printed in its table."},
+      rearHeight: {base:"Middle", high:"Middle", low:"Lower", wet:"Lower", src:"Factory table"},
+      struts: {base:"1 each side", high:"1–2 each side", low:"2 each side", wet:"1 each side", src:"Factory table"},
+      seat: {base:"126 – 22 (factory seat chart)", high:"126 – 22", low:"127 – 21", wet:"126 – 22", src:"Factory table"},
+      wheels: {base:"Magnesium (130–210)", high:"Magnesium (130–210)", low:"Magnesium (130–210)", wet:"Aluminium (130–180)", src:"Factory table"}
+    },
+    ipk: {
+      frontTrack: function(c){
+        var mini = c.cls === "cadet";
+        return {base:mini ? "990 mm overall" : "1220 mm overall (TaG)", low:mini ? "990 mm overall" : "1220 mm overall (TaG)", high:mini ? "990 mm overall" : "1220 mm overall (TaG)", wet:mini ? "1020 mm overall" : "1280 mm overall (TaG)", src:"Factory table", why:"IPK/Praga front track table (external overall width)."};
+      },
+      camber: function(c){ var mini = c.cls === "cadet"; return {base:mini ? "−2 mm overall" : "−4 mm overall (−2 mm each side)", low:mini ? "−2 mm overall" : "−4 mm overall", high:mini ? "−2 mm overall" : "−4 mm overall", wet:"0 mm", src:"Factory table"}; },
+      toe: function(c){ var mini = c.cls === "cadet"; return {base:mini ? "2 mm out overall" : "4 mm out overall", low:mini ? "2 mm out overall" : "4 mm out overall", high:mini ? "2 mm out overall" : "4 mm out overall", wet:mini ? "4 mm out overall" : "10 mm out overall", src:"Factory table"}; },
+      rearTrack: function(c){
+        if(c.cls === "cadet") return {base:"1095 mm", low:"1095 mm", high:"1095 mm", wet:"1065 mm", src:"Factory table"};
+        if(c.cls === "shifter") return {base:"1390 mm (DD2)", low:"1390 mm (DD2)", high:"1390 mm (DD2)", wet:"1380 mm", src:"Factory table"};
+        return {base:"1395 mm (TaG)", low:"1395 mm (TaG)", high:"1395 mm (TaG)", wet:"1380 mm", src:"Factory table"};
+      },
+      rearHubs: function(c){
+        if(c.cls === "cadet") return {base:"Ø40 × 95 mm", low:"Ø40 × 95 mm", high:"Ø40 × 95 mm", wet:"Ø40 × 125 mm", src:"Factory table"};
+        return {base:"Ø50 × 95 mm", low:"Ø50 × 95 mm", high:"Ø50 × 95 mm", wet:"Ø50 × 110 mm", src:"Factory table"};
+      },
+      axle: {base:"From the IPK scale S – MS – RGF – M – MH – H – EH – X (soft → hard)", low:"Move up the scale (harder)", high:"Move down the scale (softer)", src:"Manual"}
+    },
+    italkart: {
+      caster: {base:"Neutral — 4 dots facing the fuel tank", low:"Neutral to maximum (4 dots forward)", wet:"Maximum — 4 dots facing the front", src:"Manual", why:"Italkart: full caster in the wet is a must."},
+      camber: {base:"≈ 1 mm on SL tyres (0–8 mm negative on open CIK tyres)", src:"Manual"},
+      toe: {base:"2 mm out to start", src:"Manual"},
+      rearHeight: {base:"Middle position (standard)", high:"Raise the axle only if it two-wheels excessively", src:"Manual"},
+      wheels: {}
+    }
+  };
+  FAM.kosmic = {};
+  Object.keys(FAM.otk).forEach(function(k){ FAM.kosmic[k] = FAM.otk[k]; });
+  FAM.kosmic.frontTrack = {base:"3–5 mm spacers inside the standard 90 mm HST hub", low:"Narrower can improve initial reaction on a low-grip track", high:"Wider on medium-to-high grip (more weight transfer)", wet:"Widest you can", src:"Manual", why:"Kosmic (Remo Racing): HST 25 mm stub; narrow suits low grip, wider suits medium/high grip."};
+  FAM.kosmic.frontHeight = {base:"One 4 mm washer on top of the stub, the rest below (factory)", high:"Raise it (move washers from below to above the stub)", low:"Factory", src:"Manual", why:"Kosmic: raising the front ride height helps as grip increases; lowering can help a driver who struggles on high grip."};
+  FAM.kosmic.caster = {base:"Start at full caster (top eccentric to the front)", low:"Full caster", high:"Full caster — back off if it is hard to turn", wet:"Full caster", src:"Manual", why:"Remo Racing: full caster is the most common Kosmic setup and gives maximum front grip."};
+  FAM.kosmic.rearTrack = function(c){
+    if(c.cls === "cadet") return null;
+    var mx = c.cls === "junior" ? "53¼″ (≈ 1352 mm)" : "55″ (≈ 1397 mm)";
+    return {base:"Start at the class maximum: " + mx + ", then only narrow", low:"Narrower — test in small steps for more side bite", high:"Class maximum " + mx, wet:"Narrower", src:"Manual",
+      why:"Kosmic: start with standard 92 mm hubs and the rear track at the maximum; narrowing releases the inside rear but too narrow gives too much side bite."};
+  };
+  FAM.kosmic.rearHeight = {base:"Centre position (standard)", high:"Top holes (lowers the rear) to free the back", low:"Centre", src:"Manual", why:"Kosmic: lowering the rear ride height frees the rear and makes braking less nervous."};
+  FAM.kosmic.rearBar = {base:"Off in typical dry running", low:"Try it for added grip", high:"Off", wet:"Off", src:"Manual", why:"Kosmic: the bar works the tyres harder and can cause understeer; use it on sweeping tracks with more than 100cc."};
+
+  // ----- Track character (inferred from lap length; Warwick from published description) -----
+  function trackChar(t){
+    if(!t) return null;
+    if(t.name.indexOf("Warwick") === 0){
+      return {type:"fast", label:"Fast", note:"Sandy Creek is described as one of the fastest tracks in Queensland (free-flowing hairpins, esses and fast kinks; " + t.length + " m, " + t.turns + " turns)."};
+    }
+    if(!t.length){
+      if(t.name.indexOf("Toowoomba") === 0) return {type:"mixed", label:"Undulating", note:"Undulating layout with a descending main straight, a hairpin and a semi-chicane; lap length not published."};
+      return null;
+    }
+    if(t.length < 800) return {type:"tight", label:"Short / tight", note:"Short " + t.length + " m lap — leans toward stop-turn-go set-up."};
+    if(t.length >= 990) return {type:"fast", label:"Long / flowing", note:"Long " + t.length + " m lap — leans toward a flowing, higher-speed set-up."};
+    return {type:"mixed", label:"Mid-length", note:t.length + " m lap — no strong lean either way."};
+  }
+
+  function kartBrand(){
+    return KART_BRANDS.find(function(b){ return b.id === state.kbrand; }) || KART_BRANDS[0];
+  }
+
+  function buildSetupCtx(){
+    var c = getCompound();
+    var b = kartBrand();
+    var wet = !!c.wet;
+    var g = wet ? "wet" : (state.grip === "low" ? "low" : (state.grip === "high" ? "high" : "base"));
+    var t = getTrack();
+    var ch = trackChar(t);
+    return {brand:b, fam:b.fam, cls:state.kclass, height:state.kheight, g:g, wet:wet, hard:!!c.hard, compound:c.id,
+      compoundLabel:c.label, temp:state.temp, dir:state.dir, track:t, character:ch ? ch.type : null, charInfo:ch};
+  }
+
+  function resolveSetting(key, c){
+    var srcLabel = "General", why = "", v = null;
+    var f = FAM[c.fam] && FAM[c.fam][key];
+    if(f){
+      var o = typeof f === "function" ? f(c) : f;
+      if(o && o[c.g]){ v = o[c.g]; srcLabel = o.src || "Manual"; why = o.why || ""; }
+    }
+    if(!v){
+      var gen = GEN[key];
+      if(!gen) return null;
+      var go = typeof gen === "function" ? gen(c) : gen;
+      v = go[c.g] || go.base;
+      if(go.src) srcLabel = go.src;
+      why = go.why || "";
+      if(!v) return null;
+    } else if(!why){
+      var g2 = GEN[key]; var g2o = g2 ? (typeof g2 === "function" ? g2(c) : g2) : null;
+      if(g2o && g2o.why) why = g2o.why;
+    }
+    return {v:v, why:why, src:srcLabel};
+  }
+
+  function extraNotes(key, c){
+    var n = [];
+    var dry = !c.wet;
+    if(key === "caster" && dry && (c.temp <= 15 || c.hard)) n.push("Cold day or hard tyre: lean toward the higher caster option (CRG).");
+    if(key === "toe" && dry && c.character === "fast") n.push("Fast track: stay at the low end of the range — near zero on very fast tracks (CRG).");
+    if(key === "toe" && dry && c.character === "tight") n.push("Tight track: the upper end of the range helps turn-in (CRG).");
+    if(key === "ackerman" && c.character === "fast") n.push("This track leans fast/flowing, so less Ackerman keeps top speed.");
+    if(key === "ackerman" && c.character === "tight") n.push("This track leans short/tight, so more Ackerman helps direction change.");
+    if(key === "rearTrack" && dry && c.character === "tight") n.push("Short/tight lap: consider 5 mm per side narrower than the value shown (KartletiX: narrow for low-speed sections).");
+    if(key === "rearTrack" && dry && c.character === "fast") n.push("Long/fast lap: stay at the wide end (KartletiX: wide for high-speed sections).");
+    if(key === "rearBar" && dry && c.character === "fast" && (c.cls === "senior" || c.cls === "shifter")) n.push("On sweeping fast corners with more than 100cc you can try the bar (Kosmic).");
+    if(key === "seat" && dry && c.hard) n.push("Hard tyre: seat back 10–20 mm (OTK).");
+    if(key === "seat" && c.cls === "shifter") n.push("Shifter: 10–20 mm further back than a direct-drive kart (OTK).");
+    if(key === "rearHubs" && c.fam === "birel" && c.cls !== "cadet") n.push("Birel OK-range table; other categories can differ.");
+    return n;
+  }
+
+  function pressuresRow(){
+    return {v:"FL " + $("fCold").textContent + " · FR " + $("fCold2").textContent + " · RL " + $("rCold").textContent + " · RR " + $("rCold2").textContent + " psi",
+      why:"From the Recommended pressures card above (tyre, wheel, temperature, grip and turn bias). Arrow/Italkart tuning tip: ±1 psi shifts front/rear balance.", src:"Calculated"};
+  }
+
+  function setupRows(){
+    var c = buildSetupCtx();
+    var rows = [];
+    SETTINGS.forEach(function(s){
+      if(s.fam && s.fam.indexOf(c.fam) < 0) return;
+      var r = s.key === "pressures" ? pressuresRow() : resolveSetting(s.key, c);
+      if(!r) return;
+      rows.push({group:s.group, label:s.label, v:r.v, why:r.why, src:r.src, extra:(s.key === "caster" && r.src === "Factory table") ? [] : extraNotes(s.key, c)});
+    });
+    return {ctx:c, rows:rows};
+  }
+
+  function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  function renderSetup(){
+    var out = setupRows();
+    var c = out.ctx;
+    var cls = KART_CLASSES.find(function(k){ return k.id === c.cls; }) || KART_CLASSES[2];
+    var gripTxt = c.wet ? "Wet (" + c.compoundLabel + ")" : (state.grip === "low" ? "Low / green grip" : state.grip === "high" ? "High / rubbered grip" : "Normal grip");
+    var line = c.brand.label + " · " + cls.label + " · " + c.track.name + " · " + gripTxt + " · " + state.temp + "°C";
+    var charTxt = c.charInfo ? "Track type: " + c.charInfo.label + ". " + c.charInfo.note : "Track type: no lap data published for this venue, so no track-specific lean is applied.";
+    var mfr = c.brand.group === "Manufacturer data";
+    var note = mfr ? "Values tagged Factory or Manual come from " + c.brand.label + "'s own published guide; everything tagged General is the consensus of the other manufacturers."
+      : "No factory table was found for " + c.brand.label + ", so every value is General guidance — the consensus of CRG, OTK, Arrow, Italkart and Birel. Check your kart's manual for exact hardware positions.";
+
+    var html = '<div class="k-summary"><strong>' + escapeHtml(line) + '</strong><br>' + escapeHtml(charTxt) + '<br>' + escapeHtml(note) + ' Tap a setting to see why.</div>';
+    var lastGroup = "";
+    out.rows.forEach(function(r){
+      if(r.group !== lastGroup){ html += '<div class="k-group">' + r.group + '</div>'; lastGroup = r.group; }
+      var isF = r.src === "Factory table" || r.src === "Manual";
+      html += '<div class="k-row' + (r.why ? ' has-why' : '') + '"><div class="top"><span class="l">' + escapeHtml(r.label) + '</span><span class="tag' + (isF ? ' f' : '') + '">' + escapeHtml(r.src) + '</span></div>' +
+        '<div class="v">' + escapeHtml(r.v) + '</div>' +
+        (r.why ? '<div class="more">Why this? &#9662;</div><div class="w why">' + escapeHtml(r.why) + '</div>' : '') +
+        r.extra.map(function(x){ return '<div class="w x">' + escapeHtml(x) + '</div>'; }).join("") +
+        '</div>';
+    });
+    $("setupRows").innerHTML = html;
+
+    // hardware reference for the chosen brand
+    var hw = KART_HW[c.brand.fam] || KART_HW.general;
+    if(c.brand.fam === "kosmic") hw = KART_HW.kosmic.concat(KART_HW.otk);
+    var sref = SRC[c.brand.src] || SRC.general;
+    var hh = '<ul class="k-hw">' + hw.map(function(x){ return '<li>' + escapeHtml(x) + '</li>'; }).join("") + '</ul>' +
+      '<div class="empty-note">Source: <a href="' + sref.url + '" target="_blank" rel="noopener">' + escapeHtml(sref.label) + '</a></div>';
+    if(c.brand.fam === "otk" || c.brand.fam === "kosmic"){
+      hh += '<div class="empty-note" style="margin-top:8px;">Tony Kart, Kosmic, Exprit and Freeline are all OTK-group chassis, so the OTK / Tony Kart guide applies to each of them.</div>';
+    }
+    $("brandRefTitle").textContent = "About the " + c.brand.label + " adjustments";
+    $("brandRefBody").innerHTML = hh;
+  }
+
+  function setupText(){
+    var out = setupRows();
+    var parts = [];
+    out.rows.forEach(function(r){ if(r.label.indexOf("Tyre pressures") !== 0) parts.push(r.label + ": " + r.v); });
+    return out.ctx.brand.label + " (" + (KART_CLASSES.find(function(k){ return k.id === out.ctx.cls; }) || {label:""}).label + ") — " + parts.join(" · ");
+  }
+
+  // ----- Handling fixes (from CRG, Arrow, Italkart and OTK guides) -----
+  var SYMPTOMS = [
+    {id:"turnin", label:"Understeer on turn-in (won't turn in)", fixes:[
+      ["Widen the front track 5 mm per side, one step at a time","Arrow, Italkart"],
+      ["Add caster (more turn-in, heavier steering)","Arrow, OTK, Italkart"],
+      ["More Ackerman — inner steering-arm holes","Arrow, Italkart"],
+      ["Raise the front ride height (more front bite at turn-in)","OTK"],
+      ["Raise the front tyre pressure about 1 psi","Arrow, Italkart"]
+    ]},
+    {id:"push", label:"Understeer all the way through (push)", fixes:[
+      ["Move the seat forward (12 mm on Arrow/Italkart)","CRG, Arrow, Italkart"],
+      ["Softer axle, and remove or loosen the seat stays","CRG"],
+      ["Shorter rear hubs","CRG, Arrow, Italkart"],
+      ["Widen the rear track 5 mm per side (up to the class maximum)","Arrow, Italkart, CRG"],
+      ["Widen the front track and add caster","CRG"],
+      ["Tyre pressure: CRG says raise rear / lower front; Arrow and Italkart say raise the front by 1 psi. They disagree — test one at a time.","CRG, Arrow, Italkart"]
+    ]},
+    {id:"exit-under", label:"Understeer on exit (tight from the apex out)", fixes:[
+      ["Shorter rear hubs","Arrow, Italkart, CRG"],
+      ["Move the rear track in by up to ½″ (≈ 12 mm) / 5 mm per side steps","CRG, Arrow"],
+      ["Softer axle; lower any rear ballast","CRG"],
+      ["Move the seat forward 12 mm","Arrow, Italkart"],
+      ["Lower the rear ride height; loosen side-pod bars (Arrow)","CRG, Arrow"],
+      ["Rear tyre pressure: Arrow/Italkart lower it 1 psi, CRG raises it 1 psi — they disagree, test one at a time","Arrow, Italkart, CRG"]
+    ]},
+    {id:"over-entry", label:"Oversteer — rear slides going into the corner", fixes:[
+      ["Narrow the front track 5 mm per side","Arrow, Italkart"],
+      ["Reduce caster and reduce Ackerman one hole","Arrow, OTK"],
+      ["Widen the rear track 5 mm per side","Arrow, Italkart"],
+      ["Longer rear hubs, stiffer axle, add seat stays","CRG"],
+      ["Move the seat back","CRG"],
+      ["Front ride height: CRG lowers it, Arrow raises it (lower the stubs) — they disagree, test one at a time","CRG, Arrow"]
+    ]},
+    {id:"exit-loose", label:"No traction — loose out of the corner", fixes:[
+      ["Longer rear hubs","Arrow, Italkart, CRG"],
+      ["Narrow the rear track 5 mm per side","Arrow, Italkart, CRG"],
+      ["Add seat stays each side","Arrow, Italkart, CRG"],
+      ["Rear torsion bar in, blade horizontal (or vertical for max grip)","Arrow, Italkart"],
+      ["Move the whole seat back and more upright 12 mm","Arrow, Italkart"],
+      ["Stiffer axle; raise the rear ride height","CRG"]
+    ]},
+    {id:"hop", label:"Kart hops or bounces in the corners", fixes:[
+      ["Widen the rear track to (or near) the class maximum","CRG, Arrow, Italkart"],
+      ["Shorter hubs and a softer axle","CRG"],
+      ["Remove the seat stays and the rear torsion bar","CRG, Arrow"],
+      ["Lower any rear ballast; lower the rear ride height","CRG"],
+      ["On very bumpy tracks remove the rear bar / loosen the 4th rail so the chassis rides bumps","Arrow, Italkart"]
+    ]},
+    {id:"twowheel", label:"Two-wheeling too much (both inside wheels lift)", fixes:[
+      ["Raise the rear axle in the chassis (lowers the rear ride height)","Arrow, Italkart"],
+      ["Widen the rear track 5 mm per side","Arrow, Italkart"]
+    ]},
+    {id:"darty", label:"Front too sharp / darty on the straights", fixes:[
+      ["Check toe — too much toe-out makes it darty","CRG"],
+      ["Widen the front track at least one spacer per side if it is too narrow","CRG"],
+      ["Reduce Ackerman; lower the front tyre pressure 1 psi","Arrow, Italkart"]
+    ]}
+  ];
+
+  function renderFixes(){
+    var id = $("fixSelect").value;
+    var s = SYMPTOMS.find(function(x){ return x.id === id; }) || SYMPTOMS[0];
+    $("fixList").innerHTML = s.fixes.map(function(f, i){
+      return '<div class="k-row"><div class="top"><span class="l">Try ' + (i + 1) + '</span><span class="tag f">' + escapeHtml(f[1]) + '</span></div><div class="v" style="font-size:14.5px;font-weight:500;">' + escapeHtml(f[0]) + '</div></div>';
+    }).join("") + '<div class="empty-note">Change one thing at a time, in the order listed (most effective first where the manual ranks them).</div>';
+  }
+
+  function populateKartControls(){
+    var bs = $("kbrandSelect");
+    bs.innerHTML = "";
+    var groups = {};
+    KART_BRANDS.forEach(function(b){
+      if(!groups[b.group]){
+        var og = document.createElement("optgroup");
+        og.label = b.group;
+        bs.appendChild(og);
+        groups[b.group] = og;
+      }
+      var opt = document.createElement("option");
+      opt.value = b.id; opt.textContent = b.label;
+      groups[b.group].appendChild(opt);
+    });
+    bs.value = state.kbrand;
+
+    var cs = $("kclassSelect");
+    cs.innerHTML = "";
+    KART_CLASSES.forEach(function(k){
+      var opt = document.createElement("option");
+      opt.value = k.id; opt.textContent = k.label;
+      cs.appendChild(opt);
+    });
+    cs.value = state.kclass;
+
+    var hs = $("kheightSelect");
+    hs.innerHTML = "";
+    DRIVER_HEIGHTS.forEach(function(h){
+      var opt = document.createElement("option");
+      opt.value = h.id; opt.textContent = h.label;
+      hs.appendChild(opt);
+    });
+    hs.value = state.kheight;
+
+    var fs = $("fixSelect");
+    fs.innerHTML = "";
+    SYMPTOMS.forEach(function(s){
+      var opt = document.createElement("option");
+      opt.value = s.id; opt.textContent = s.label;
+      fs.appendChild(opt);
+    });
+    renderFixes();
+  }
+
+
   // ---------- Wiring ----------
 
   function wireUp(){
@@ -1292,6 +1937,15 @@
       pushCloud();
       applyTrackProfile();
     });
+    $("kbrandSelect").addEventListener("change", function(){ state.kbrand = this.value; calc(); });
+    $("kclassSelect").addEventListener("change", function(){ state.kclass = this.value; calc(); });
+    $("kheightSelect").addEventListener("change", function(){ state.kheight = this.value; calc(); });
+    $("setupRows").addEventListener("click", function(e){
+      var row = e.target.closest(".k-row");
+      if(row && row.classList.contains("has-why")) row.classList.toggle("open");
+    });
+    $("fixSelect").addEventListener("change", renderFixes);
+    $("fillSetup").addEventListener("click", function(){ $("setupUsed").value = setupText(); });
     $("saveLog").addEventListener("click", saveLogEntry);
     wireAccount();
   }
@@ -1302,6 +1956,7 @@
     populateBrands();
     populateCompounds();
     populateRims();
+    populateKartControls();
     populateTracks();
     setSeg("gripSeg","data-grip",state.grip);
     setSeg("dirSeg","data-dir",state.dir);
@@ -1329,6 +1984,7 @@
         populateBrands();
         populateCompounds();
         populateRims();
+        populateKartControls();
         populateTracks();
         setSeg("gripSeg","data-grip",state.grip);
         setSeg("dirSeg","data-dir",state.dir);
